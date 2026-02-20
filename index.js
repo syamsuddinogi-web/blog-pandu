@@ -3,60 +3,129 @@ const session = require('express-session');
 const postgres = require('postgres');
 const app = express();
 
-app.use(session({ secret: 'rahasia-pandu', resave: false, saveUninitialized: true }));
+// 1. KONFIGURASI DASAR
+app.use(session({ secret: 'desa-digital-pandu', resave: false, saveUninitialized: true }));
 app.use(express.urlencoded({ extended: true }));
 
+// Koneksi ke Neon Cloud
 const sql = postgres("postgresql://neondb_owner:npg_0hBbRxa4EpoF@ep-jolly-dust-ai4zkz1g-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require");
-const ADMIN_PASSWORD = "pandu123";
 
-// Fungsi Satpam (Hanya untuk Admin)
+const ADMIN_PASSWORD = "pandu123";
 const auth = (req, res, next) => { if (req.session.isLoggedIn) next(); else res.redirect('/login'); };
 
-// --- 🏠 1. HALAMAN UTAMA (PUBLIK - BEBAS AKSES) ---
+// 2. FUNGSI TEMPLATE NAVBAR & HEADER
+const layout = (content) => `
+  <!DOCTYPE html>
+  <html lang="id">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net" rel="stylesheet">
+    <title>Sistem Informasi Desa Pandu</title>
+    <style>
+      .navbar-brand { font-weight: 800; letter-spacing: 1px; }
+      .card-img-top { height: 250px; object-fit: cover; }
+      .nav-link:hover { color: #ffc107 !important; }
+    </style>
+  </head>
+  <body class="bg-light text-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-top shadow-sm">
+      <div class="container">
+        <a class="navbar-brand" href="/">🌳 SID DESAKU</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto text-uppercase" style="font-size: 0.85rem; font-weight: 600;">
+            <li class="nav-item"><a class="nav-link" href="/">Beranda</a></li>
+            <li class="nav-item"><a class="nav-link" href="/kabar-desa">Kabar Desa</a></li>
+            <li class="nav-item"><a class="nav-link" href="/galeri">Galeri</a></li>
+            <li class="nav-item"><a class="nav-link" href="/lapak">Lapak</a></li>
+            <li class="nav-item"><a class="nav-link text-warning" href="/apbdes">📊 APBDes</a></li>
+            <li class="nav-item ms-lg-3"><a class="btn btn-sm btn-outline-light px-3" href="/admin">Kelola</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container py-5">${content}</div>
+    <footer class="text-center py-5 bg-white border-top mt-5">
+      <p class="mb-0 text-muted">&copy; 2024 Digitalisasi Desa - Dikembangkan oleh Pandu</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net"></script>
+  </body>
+  </html>
+`;
+
+// 3. RUTE PUBLIK (BERANDA)
 app.get('/', async (req, res) => {
   try {
-    const posts = await sql`SELECT * FROM posts ORDER BY id DESC`;
-    let html = `<link href="https://cdn.jsdelivr.net" rel="stylesheet">
-                <nav class="navbar navbar-light bg-light border-bottom mb-5"><div class="container"><span class="navbar-brand mb-0 h1 text-primary">📰 Blog Pandu Official</span><a href="/login" class="btn btn-sm btn-outline-secondary">Login Admin</a></div></nav>
-                <div class="container" style="max-width: 800px;">`;
+    const posts = await sql`SELECT p.*, c.name as kategori FROM posts p JOIN categories c ON p.category_id = c.id ORDER BY p.id DESC LIMIT 6`;
+    let content = `<h2 class="fw-bold mb-4">🏠 Kabar Terbaru</h2><div class="row">`;
     posts.forEach(p => {
-      html += `<div class="card mb-5 border-0 shadow-sm overflow-hidden">
-                ${p.image_url ? `<img src="${p.image_url}" class="card-img-top" style="height:350px; object-fit:cover;">` : ''}
-                <div class="card-body p-4">
-                  <h2 class="fw-bold">${p.title}</h2>
-                  <p class="text-muted" style="line-height:1.8;">${p.content}</p>
-                  <a href="/like/${p.id}" class="btn btn-outline-danger btn-sm">❤️ Suka (${p.likes || 0})</a>
-                </div>
-              </div>`;
+      content += `
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 border-0 shadow-sm overflow-hidden">
+            ${p.image_url ? `<img src="${p.image_url}" class="card-img-top">` : ''}
+            <div class="card-body">
+              <span class="badge bg-success mb-2">${p.kategori}</span>
+              <h5 class="card-title fw-bold">${p.title}</h5>
+              <p class="card-text text-muted small">${p.content.substring(0, 100)}...</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <a href="/like/${p.id}" class="btn btn-sm btn-outline-danger">❤️ ${p.likes || 0}</a>
+                <span class="text-muted" style="font-size: 10px;">${new Date(p.created_at).toLocaleDateString('id-ID')}</span>
+              </div>
+            </div>
+          </div>
+        </div>`;
     });
-    res.send(html + "</div><footer class='text-center py-5 text-muted'>&copy; 2024 Blog Pandu</footer></body>");
-  } catch (err) { res.send(err.message); }
+    res.send(layout(content + `</div>`));
+  } catch (err) { res.send(layout(`<h3>Gagal memuat data: ${err.message}</h3>`)); }
 });
 
-// --- 🔐 2. HALAMAN LOGIN & LOGOUT ---
-app.get('/login', (req, res) => {
-  res.send(`<link href="https://cdn.jsdelivr.net" rel="stylesheet"><body class="bg-light d-flex align-items-center vh-100"><div class="card shadow mx-auto" style="width: 300px;"><div class="card-body"><h4>🔐 Login Admin</h4><form action="/login" method="POST"><input type="password" name="pass" class="form-control mb-2" required><button class="btn btn-primary w-100">Masuk</button></form><br><a href="/" class="d-block text-center text-decoration-none">← Kembali ke Blog</a></div></div></body>`);
+// 4. RUTE HALAMAN KHUSUS
+app.get('/kabar-desa', async (req, res) => {
+  const posts = await sql`SELECT p.*, c.name FROM posts p JOIN categories c ON p.category_id = c.id WHERE c.name = '📢 Kabar Desa'`;
+  res.send(layout(`<h2 class="mb-4">📢 Kabar Desa</h2><div class="list-group">${posts.map(p => `<div class="list-group-item"><h5>${p.title}</h5><p>${p.content}</p></div>`).join('')}</div>`));
 });
-app.post('/login', (req, res) => { if (req.body.pass === ADMIN_PASSWORD) { req.session.isLoggedIn = true; res.redirect('/admin'); } else { res.send("<script>alert('Password Salah!'); window.location='/login';</script>"); } });
+
+app.get('/apbdes', (req, res) => res.send(layout(`<div class="text-center py-5"><h2>📊 Transparansi APBDes</h2><p>Data Anggaran Desa sedang diverifikasi oleh Pemerintah Desa.</p><img src="https://api.dicebear.com" style="width:200px;"></div>`)));
+
+// 5. SISTEM LOGIN & ADMIN
+app.get('/login', (req, res) => {
+  res.send(layout(`<div class="row justify-content-center"><div class="col-md-4"><div class="card p-4 shadow-sm"><h3>🔐 Login Admin</h3><form action="/login" method="POST"><input type="password" name="pass" class="form-control mb-3" placeholder="Password" required><button class="btn btn-success w-100">Masuk</button></form></div></div></div>`));
+});
+app.post('/login', (req, res) => { if (req.body.pass === ADMIN_PASSWORD) { req.session.isLoggedIn = true; res.redirect('/admin'); } else { res.redirect('/login'); } });
 app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
 
-// --- 🛠️ 3. HALAMAN KELOLA (ADMIN - DIPROTEKSI) ---
 app.get('/admin', auth, async (req, res) => {
-  try {
-    const posts = await sql`SELECT * FROM posts ORDER BY id DESC`;
-    let html = `<link href="https://cdn.jsdelivr.net" rel="stylesheet"><nav class="navbar navbar-dark bg-dark mb-4"><div class="container"><span class="navbar-brand">🚀 Admin Panel</span><div class="d-flex gap-2"><a href="/" class="btn btn-outline-info btn-sm">Lihat Blog</a><a href="/logout" class="btn btn-outline-danger btn-sm">Keluar</a></div></div></nav><div class="container py-4">
-    <div class="card p-3 mb-4"><h5>✍️ Tambah Artikel</h5><form action="/tambah" method="POST" class="row g-2"><div class="col-md-6"><input name="judul" class="form-control" placeholder="Judul" required></div><div class="col-md-6"><input name="image_url" class="form-control" placeholder="URL Gambar"></div><div class="col-12"><textarea name="konten" class="form-control" placeholder="Isi..." required></textarea></div><button class="btn btn-success">Posting ke Neon Cloud</button></form></div>`;
-    posts.forEach(p => { html += `<div class="alert alert-secondary d-flex justify-content-between"><span><b>${p.title}</b> (${p.likes || 0} ❤️)</span> <a href="/hapus/${p.id}" class="text-danger">Hapus</a></div>`; });
-    res.send(html + "</div></body>");
-  } catch (err) { res.send(err.message); }
+  const cats = await sql`SELECT * FROM categories`;
+  const posts = await sql`SELECT p.*, c.name as kategori FROM posts p JOIN categories c ON p.category_id = c.id ORDER BY p.id DESC`;
+  let opts = cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  let content = `
+    <div class="row"><div class="col-md-4">
+      <div class="card p-3 shadow-sm mb-4"><h5>✍️ Posting SID</h5>
+        <form action="/tambah" method="POST">
+          <input name="judul" class="form-control mb-2" placeholder="Judul" required>
+          <select name="category_id" class="form-select mb-2">${opts}</select>
+          <input name="image_url" class="form-control mb-2" placeholder="Link Foto">
+          <textarea name="konten" class="form-control mb-2" placeholder="Isi..." required></textarea>
+          <button class="btn btn-success w-100">Kirim</button>
+        </form>
+      </div>
+    </div><div class="col-md-8"><h3>Daftar Data</h3><table class="table bg-white">
+      ${posts.map(p => `<tr><td>[${p.kategori}] ${p.title}</td><td><a href="/hapus/${p.id}" class="text-danger">Hapus</a></td></tr>`).join('')}
+    </table></div></div>`;
+  res.send(layout(content));
 });
 
-// --- ⚙️ 4. PROSES DATA ---
-app.post('/tambah', auth, async (req, res) => { await sql`INSERT INTO posts (title, content, image_url, category_id) VALUES (${req.body.judul}, ${req.body.konten}, ${req.body.image_url}, 1)`; res.redirect('/admin'); });
+// 6. PROSES CRUD
+app.post('/tambah', auth, async (req, res) => {
+  const { judul, konten, image_url, category_id } = req.body;
+  await sql`INSERT INTO posts (title, content, image_url, category_id) VALUES (${judul}, ${konten}, ${image_url}, ${category_id})`;
+  res.redirect('/admin');
+});
 app.get('/hapus/:id', auth, async (req, res) => { await sql`DELETE FROM posts WHERE id = ${req.params.id}`; res.redirect('/admin'); });
 app.get('/like/:id', async (req, res) => { await sql`UPDATE posts SET likes = COALESCE(likes, 0) + 1 WHERE id = ${req.params.id}`; res.redirect('/'); });
 
-// EXPORT UNTUK VERCEL
 module.exports = app;
-
-app.listen(3000, () => console.log("🚀 Server Jalan!"));
+app.listen(3000, () => console.log("🚀 SID Pandu Jalan!"));
