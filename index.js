@@ -68,3 +68,16 @@ app.get('/hapus/:id', auth, async (req, res) => { await sql`DELETE FROM posts WH
 app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/login'); });
 
 app.listen(3000, () => console.log("🚀 Server Jalan!"));
+// 1. HALAMAN UTAMA SEKARANG JADI BLOG PUBLIK (TANPA LOGIN)
+app.get('/', async (req, res) => {
+  try {
+    const posts = await sql`SELECT * FROM posts ORDER BY id DESC`;
+    // ... isi kode HTML blog kamu yang tadi ...
+    res.send(html);
+  } catch (err) { res.send(err.message); }
+});
+
+// 2. HALAMAN ADMIN PINDAH KE /ADMIN (PAKAI LOGIN)
+app.get('/admin', auth, async (req, res) => {
+  // ... isi kode HTML admin kamu yang tadi ...
+});
