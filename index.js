@@ -67,17 +67,31 @@ app.post('/tambah', auth, async (req, res) => { await sql`INSERT INTO posts (tit
 app.get('/hapus/:id', auth, async (req, res) => { await sql`DELETE FROM posts WHERE id = ${req.params.id}`; res.redirect('/'); });
 app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/login'); });
 
-app.listen(3000, () => console.log("🚀 Server Jalan!"));
-// 1. HALAMAN UTAMA SEKARANG JADI BLOG PUBLIK (TANPA LOGIN)
+// --- 1. HALAMAN UTAMA SEKARANG JADI BLOG PUBLIK (BEBAS AKSES) ---
 app.get('/', async (req, res) => {
   try {
     const posts = await sql`SELECT * FROM posts ORDER BY id DESC`;
-    // ... isi kode HTML blog kamu yang tadi ...
-    res.send(html);
+    let html = `<link href="https://cdn.jsdelivr.net" rel="stylesheet">
+                <nav class="navbar navbar-light bg-light border-bottom mb-5"><div class="container"><span class="navbar-brand mb-0 h1 text-primary">📰 Blog Pandu</span><a href="/admin" class="btn btn-sm btn-outline-secondary">Login Admin</a></div></nav>
+                <div class="container" style="max-width: 800px;">`;
+    
+    posts.forEach(p => {
+      html += `<div class="card mb-5 border-0 shadow-sm overflow-hidden">
+                ${p.image_url ? `<img src="${p.image_url}" class="card-img-top" style="height:300px; object-fit:cover;">` : ''}
+                <div class="card-body p-4">
+                  <h2 class="fw-bold">${p.title}</h2>
+                  <p class="text-muted">${p.content}</p>
+                  <a href="/like/${p.id}" class="btn btn-outline-danger btn-sm">❤️ Suka (${p.likes || 0})</a>
+                </div>
+              </div>`;
+    });
+    res.send(html + "</div></body>");
   } catch (err) { res.send(err.message); }
 });
 
-// 2. HALAMAN ADMIN PINDAH KE /ADMIN (PAKAI LOGIN)
+// --- 2. PINDAHKAN HALAMAN KELOLA (ADMIN) KE /ADMIN ---
 app.get('/admin', auth, async (req, res) => {
-  // ... isi kode HTML admin kamu yang tadi ...
+  // Pindahkan kode tampilan admin kamu (yang ada tombol hapusnya) ke sini
+  // ... (kode admin kamu sebelumnya)
 });
+
