@@ -94,4 +94,5 @@ app.get('/admin', auth, async (req, res) => {
   // Pindahkan kode tampilan admin kamu (yang ada tombol hapusnya) ke sini
   // ... (kode admin kamu sebelumnya)
 });
+module.exports = app;
 
