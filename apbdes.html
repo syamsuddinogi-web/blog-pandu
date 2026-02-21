@@ -179,14 +179,14 @@ trix-toolbar [data-trix-dialog] [data-trix-validate]:invalid {
         
         <div id="mobileMenuDropdown" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl max-h-[80vh] overflow-y-auto">
             <div class="px-4 pt-2 pb-6 space-y-1">
-                <a href="/" class="block px-3 py-3 text-base font-medium rounded-md text-gray-700 hover:text-emerald-600 hover:bg-emerald-50">Beranda</a>
-                <a href="https://wani-lumbumpetigo-tanantovea.updesa.online/profile" class="block px-3 py-3 text-base font-medium rounded-md text-gray-700 hover:text-emerald-600 hover:bg-emerald-50">Profil Desa</a>
-                <a href="https://wani-lumbumpetigo-tanantovea.updesa.online/berita" class="block px-3 py-3 text-base font-medium rounded-md text-gray-700 hover:text-emerald-600 hover:bg-emerald-50">Kabar Desa</a>
-                <a href="https://wani-lumbumpetigo-tanantovea.updesa.online/lapak" class="block px-3 py-3 text-base font-medium rounded-md text-gray-700 hover:text-emerald-600 hover:bg-emerald-50">Lapak Desa</a>
-                <a href="https://wani-lumbumpetigo-tanantovea.updesa.online/infografis" class="block px-3 py-3 text-base font-medium rounded-md text-emerald-700 bg-emerald-50">Transparansi</a>
+                <a href="https://lumbumpetigo.site/" class="block px-3 py-3 text-base font-medium rounded-md text-gray-700 hover:text-emerald-600 hover:bg-emerald-50">Beranda</a>
+                <a href="https://lumbumpetigo.site/profile" class="block px-3 py-3 text-base font-medium rounded-md text-gray-700 hover:text-emerald-600 hover:bg-emerald-50">Profil Desa</a>
+                <a href="https://lumbumpetigo.site/berita" class="block px-3 py-3 text-base font-medium rounded-md text-gray-700 hover:text-emerald-600 hover:bg-emerald-50">Kabar Desa</a>
+                <a href="https://lumbumpetigo.site/lapak" class="block px-3 py-3 text-base font-medium rounded-md text-gray-700 hover:text-emerald-600 hover:bg-emerald-50">Lapak Desa</a>
+                <a href="https://lumbumpetigo.site/infografis" class="block px-3 py-3 text-base font-medium rounded-md text-emerald-700 bg-emerald-50">Transparansi</a>
 
                 <div class="pt-4 mt-4 border-t border-gray-100">
-                    <a href="/masuk" class="block w-full text-center px-4 py-3 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 shadow-sm">
+                    <a href="https://www.lumbumpetigo.berdesa.id/layanan-mandiri/masuk" class="block w-full text-center px-4 py-3 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 shadow-sm">
                         Masuk Layanan Mandiri
                     </a>
                 </div>
@@ -293,7 +293,7 @@ trix-toolbar [data-trix-dialog] [data-trix-validate]:invalid {
                     Pengelolaan Anggaran Pendapatan dan Belanja Desa (APBDES) merupakan bentuk akuntabilitas publik Pemerintah Desa Wani Lumbumpetigo. Kami berkomitmen menyajikan rincian pendapatan dan belanja desa secara transparan untuk meminimalkan risiko korupsi. Setiap rupiah yang dikelola ditujukan sepenuhnya untuk percepatan pembangunan infrastruktur dan pemberdayaan warga.
                 </p>
             </div>
-            <form action="https://wani-lumbumpetigo-tanantovea.updesa.online/infografis" method="GET">
+            <form action="https://lumbumpetigo.site/infografis" method="GET">
                 <select name="year" onchange="this.form.submit()" class="bg-white/10 border border-white/20 text-white font-black px-8 py-4 rounded-2xl cursor-pointer hover:bg-white/20 transition-all">
                                             <option value="2026" selected="" class="text-slate-900">TAHUN ANGGARAN 2026</option>
                                             <option value="2025" class="text-slate-900">TAHUN ANGGARAN 2025</option>
@@ -544,32 +544,37 @@ trix-toolbar [data-trix-dialog] [data-trix-validate]:invalid {
         });
     </script>
 <script>
-  console.log("Mulai menarik data APBDes...");
   fetch('/api/apbdes')
     .then(res => res.json())
     .then(data => {
-      console.log("Data diterima:", data);
+      let totalPendapatan = 0;
+      let totalBelanja = 0;
       let rows = '';
-      if(data.length === 0) {
-          rows = '<tr><td colspan="4" class="text-center">Belum ada data anggaran di database Neon.</td></tr>';
-      } else {
-          data.forEach(item => {
-            // Hitung persentase dengan aman
-            let persen = item.anggaran > 0 ? ((item.realisasi / item.anggaran) * 100).toFixed(1) : 0;
-            rows += `<tr>
-              <td class="fw-bold text-dark">${item.rincian}</td>
-              <td>Rp ${new Intl.NumberFormat('id-ID').format(item.anggaran)}</td>
-              <td>Rp ${new Intl.NumberFormat('id-ID').format(item.realisasi)}</td>
-              <td><span class="badge bg-success">${persen}%</span></td>
-            </tr>`;
-          });
-      }
+
+      data.forEach(item => {
+        // Hitung Total (Asumsi rincian mengandung kata 'Pendapatan' atau 'Belanja')
+        if (item.rincian.toLowerCase().includes('pendapatan')) {
+          totalPendapatan += parseInt(item.anggaran);
+        } else {
+          totalBelanja += parseInt(item.realisasi);
+        }
+
+        // Isi Tabel Bawah
+        rows += `<tr>
+          <td>${item.rincian}</td>
+          <td>Rp ${new Intl.NumberFormat('id-ID').format(item.anggaran)}</td>
+          <td>Rp ${new Intl.NumberFormat('id-ID').format(item.realisasi)}</td>
+          <td><span class="badge bg-success">${((item.realisasi/item.anggaran)*100).toFixed(1)}%</span></td>
+        </tr>`;
+      });
+
+      // UPDATE ANGKA DI ATAS (Pastikan ID-nya sesuai dengan HTML kamu)
+      document.getElementById('total-pendapatan').innerText = "Rp " + new Intl.NumberFormat('id-ID').format(totalPendapatan);
+      document.getElementById('total-belanja').innerText = "Rp " + new Intl.NumberFormat('id-ID').format(totalBelanja);
       document.getElementById('tabel-apbdes').innerHTML = rows;
     })
-    .catch(err => {
-      console.error("Error:", err);
-      document.getElementById('tabel-apbdes').innerHTML = '<tr><td colspan="4" class="text-danger">Gagal tersambung ke database.</td></tr>';
-    });
+    .catch(err => console.error("Kabel Data Putus:", err));
 </script>
+
 
 </body>
