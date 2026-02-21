@@ -271,3 +271,35 @@ app.get('/statistik', async (req, res) => {
     res.send(layout(content));
   } catch (err) { res.send(layout("Gagal memuat statistik: " + err.message)); }
 });
+// --- 🛒 HALAMAN LAPAK DESA (KHUSUS PRODUK UMKM) ---
+app.get('/lapak', async (req, res) => {
+  try {
+    const products = await sql`
+      SELECT p.*, c.name as kategori 
+      FROM posts p 
+      JOIN categories c ON p.category_id = c.id 
+      WHERE c.name = '🛒 Lapak Desa'
+      ORDER BY p.id DESC`;
+
+    let html = `<link href="https://cdn.jsdelivr.net" rel="stylesheet">
+                <nav class="navbar navbar-dark bg-success mb-5"><div class="container"><a class="navbar-brand h1" href="/">🌳 SID DESAKU</a><a href="/login" class="btn btn-sm btn-outline-light">Admin</a></div></nav>
+                <div class="container"><h2 class="mb-4">🛒 Lapak UMKM Desa</h2><div class="row">`;
+    
+    products.forEach(p => {
+      html += `
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            ${p.image_url ? `<img src="${p.image_url}" class="card-img-top" style="height:200px; object-fit:cover;">` : ''}
+            <div class="card-body">
+              <h5 class="fw-bold">${p.title}</h5>
+              <p class="text-success fw-bold">Rp ${p.price || 'Hubungi Penjual'}</p>
+              <p class="text-muted small">${p.content.substring(0, 80)}...</p>
+              <a href="https://wa.me, saya tertarik dengan ${p.title}" class="btn btn-success w-100 btn-sm">Beli via WhatsApp</a>
+            </div>
+          </div>
+        </div>`;
+    });
+    res.send(html + "</div></div><footer class='text-center py-5'>&copy; 2024 Lapak Desa Digital</footer></body>");
+  } catch (err) { res.send(err.message); }
+});
+<input name="price" class="form-control mb-2" placeholder="Harga Produk (Contoh: 50.000)">
