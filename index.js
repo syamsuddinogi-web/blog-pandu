@@ -3,7 +3,7 @@ const session = require('express-session');
 const postgres = require('postgres');
 const app = express();
 
-// 1. KONFIGURASI DASAR
+// Konfigurasi Middleware
 app.use(session({ secret: 'desa-digital-pandu', resave: false, saveUninitialized: true }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -13,293 +13,103 @@ const sql = postgres("postgresql://neondb_owner:npg_0hBbRxa4EpoF@ep-jolly-dust-a
 const ADMIN_PASSWORD = "pandu123";
 const auth = (req, res, next) => { if (req.session.isLoggedIn) next(); else res.redirect('/login'); };
 
-// 2. FUNGSI TEMPLATE NAVBAR & HEADER
+// 1. FUNGSI LAYOUT (NAVBAR & FOOTER)
 const layout = (content) => `
-  <!DOCTYPE html>
-  <html lang="id">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net" rel="stylesheet">
-    <title>Sistem Informasi Desa Pandu</title>
-    <style>
-      .navbar-brand { font-weight: 800; letter-spacing: 1px; }
-      .card-img-top { height: 250px; object-fit: cover; }
-      .nav-link:hover { color: #ffc107 !important; }
-    </style>
-  </head>
-  <body class="bg-light text-dark">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-top shadow-sm">
-      <div class="container">
-        <a class="navbar-brand" href="/">🌳 SID DESAKU</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto text-uppercase" style="font-size: 0.85rem; font-weight: 600;">
-            <li class="nav-item"><a class="nav-link" href="/">Beranda</a></li>
-            <li class="nav-item"><a class="nav-link" href="/kabar-desa">Kabar Desa</a></li>
-            <li class="nav-item"><a class="nav-link" href="/galeri">Galeri</a></li>
-            <li class="nav-item"><a class="nav-link" href="/lapak">Lapak</a></li>
-            <li class="nav-item"><a class="nav-link text-warning" href="/apbdes">📊 APBDes</a></li>
-            <li class="nav-item ms-lg-3"><a class="btn btn-sm btn-outline-light px-3" href="/admin">Kelola</a></li>
-          </ul>
-        </div>
+  <link href="https://cdn.jsdelivr.net" rel="stylesheet">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm mb-5">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/">🌳 SID DESAKU</a>
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="/">Beranda</a>
+        <a class="nav-link text-warning fw-bold" href="/lapak">🛒 Lapak Desa</a>
+        <a class="nav-link" href="/admin">Kelola</a>
       </div>
-    </nav>
-    <div class="container py-5">${content}</div>
-    <footer class="text-center py-5 bg-white border-top mt-5">
-      <p class="mb-0 text-muted">&copy; 2024 Digitalisasi Desa - Dikembangkan oleh Pandu</p>
-    </footer>
-    <script src="https://cdn.jsdelivr.net"></script>
-  </body>
-  </html>
+    </div>
+  </nav>
+  <div class="container py-3">${content}</div>
+  <footer class="text-center py-5 text-muted border-top mt-5">&copy; 2024 SID Desa - Digitalisasi by Pandu</footer>
 `;
 
-// 3. RUTE PUBLIK (BERANDA)
+// 2. HALAMAN UTAMA (KABAR DESA)
 app.get('/', async (req, res) => {
   try {
-    const posts = await sql`SELECT p.*, c.name as kategori FROM posts p JOIN categories c ON p.category_id = c.id ORDER BY p.id DESC LIMIT 6`;
-    let content = `<h2 class="fw-bold mb-4">🏠 Kabar Terbaru</h2><div class="row">`;
+    const posts = await sql`SELECT p.*, c.name as kategori FROM posts p JOIN categories c ON p.category_id = c.id ORDER BY p.id DESC`;
+    let content = `<h2 class="mb-4 fw-bold">🏠 Kabar Desa Terbaru</h2><div class="row">`;
     posts.forEach(p => {
-      content += `
-        <div class="col-md-4 mb-4">
-          <div class="card h-100 border-0 shadow-sm overflow-hidden">
-            ${p.image_url ? `<img src="${p.image_url}" class="card-img-top">` : ''}
-            <div class="card-body">
-              <span class="badge bg-success mb-2">${p.kategori}</span>
-              <h5 class="card-title fw-bold">${p.title}</h5>
-              <p class="card-text text-muted small">${p.content.substring(0, 100)}...</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <a href="/like/${p.id}" class="btn btn-sm btn-outline-danger">❤️ ${p.likes || 0}</a>
-                <span class="text-muted" style="font-size: 10px;">${new Date(p.created_at).toLocaleDateString('id-ID')}</span>
-              </div>
-            </div>
-          </div>
-        </div>`;
+      content += `<div class="col-md-6 mb-4"><div class="card h-100 border-0 shadow-sm p-3">
+        ${p.image_url ? `<img src="${p.image_url}" class="card-img-top mb-3" style="height:200px; object-fit:cover; border-radius:10px;">` : ''}
+        <span class="badge bg-success mb-2" style="width:fit-content;">${p.kategori}</span>
+        <h4>${p.title}</h4><p class="text-muted small">${p.content.substring(0, 150)}...</p>
+        <div class="d-flex justify-content-between align-items-center mt-auto">
+          <a href="/like/${p.id}" class="btn btn-sm btn-outline-danger">❤️ ${p.likes || 0}</a>
+        </div>
+      </div></div>`;
     });
-    res.send(layout(content + `</div>`));
-  } catch (err) { res.send(layout(`<h3>Gagal memuat data: ${err.message}</h3>`)); }
+    res.send(layout(content + "</div>"));
+  } catch (err) { res.send(layout("<h5>Data sedang dimuat atau database belum siap...</h5>")); }
 });
 
-// 4. RUTE HALAMAN KHUSUS
-app.get('/kabar-desa', async (req, res) => {
-  const posts = await sql`SELECT p.*, c.name FROM posts p JOIN categories c ON p.category_id = c.id WHERE c.name = '📢 Kabar Desa'`;
-  res.send(layout(`<h2 class="mb-4">📢 Kabar Desa</h2><div class="list-group">${posts.map(p => `<div class="list-group-item"><h5>${p.title}</h5><p>${p.content}</p></div>`).join('')}</div>`));
+// 3. HALAMAN LAPAK UMKM
+app.get('/lapak', async (req, res) => {
+  try {
+    const products = await sql`SELECT * FROM posts WHERE category_id = (SELECT id FROM categories WHERE name LIKE '%Lapak%' LIMIT 1)`;
+    let content = `<h2 class="mb-4 fw-bold text-success">🛒 Lapak UMKM Desa</h2><div class="row">`;
+    products.forEach(p => {
+      content += `<div class="col-md-4 mb-4"><div class="card shadow-sm border-0 h-100 p-3 text-center">
+        ${p.image_url ? `<img src="${p.image_url}" class="card-img-top rounded mb-3">` : ''}
+        <h5>${p.title}</h5>
+        <p class="text-success fw-bold">Rp ${p.price || '-'}</p>
+        <a href="https://wa.me" class="btn btn-success w-100 btn-sm mt-auto">Beli di WA</a>
+      </div></div>`;
+    });
+    res.send(layout(content + "</div>"));
+  } catch (err) { res.send(layout("Halaman Lapak sedang dipersiapkan...")); }
 });
 
-app.get('/apbdes', (req, res) => res.send(layout(`<div class="text-center py-5"><h2>📊 Transparansi APBDes</h2><p>Data Anggaran Desa sedang diverifikasi oleh Pemerintah Desa.</p><img src="https://api.dicebear.com" style="width:200px;"></div>`)));
-
-// 5. SISTEM LOGIN & ADMIN
+// 4. LOGIN & ADMIN
 app.get('/login', (req, res) => {
-  res.send(layout(`<div class="row justify-content-center"><div class="col-md-4"><div class="card p-4 shadow-sm"><h3>🔐 Login Admin</h3><form action="/login" method="POST"><input type="password" name="pass" class="form-control mb-3" placeholder="Password" required><button class="btn btn-success w-100">Masuk</button></form></div></div></div>`));
+  res.send(layout(`<div class="card p-4 mx-auto shadow" style="max-width:350px;"><h3>🔐 Login Admin</h3><form action="/login" method="POST"><input type="password" name="pass" class="form-control mb-3" required><button class="btn btn-success w-100">Masuk</button></form></div>`));
 });
-app.post('/login', (req, res) => { if (req.body.pass === ADMIN_PASSWORD) { req.session.isLoggedIn = true; res.redirect('/admin'); } else { res.redirect('/login'); } });
-app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
+
+app.post('/login', (req, res) => {
+  if (req.body.pass === ADMIN_PASSWORD) { req.session.isLoggedIn = true; res.redirect('/admin'); }
+  else { res.redirect('/login'); }
+});
 
 app.get('/admin', auth, async (req, res) => {
-  const cats = await sql`SELECT * FROM categories`;
-  const posts = await sql`SELECT p.*, c.name as kategori FROM posts p JOIN categories c ON p.category_id = c.id ORDER BY p.id DESC`;
-  let opts = cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-  let content = `
-    <div class="row"><div class="col-md-4">
-      <div class="card p-3 shadow-sm mb-4"><h5>✍️ Posting SID</h5>
+  try {
+    const cats = await sql`SELECT * FROM categories`;
+    const posts = await sql`SELECT p.*, c.name as kategori FROM posts p JOIN categories c ON p.category_id = c.id ORDER BY p.id DESC`;
+    let opts = cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    let content = `
+      <div class="d-flex justify-content-between"><h2>⚙️ Admin Panel</h2><a href="/logout" class="btn btn-danger btn-sm">Keluar</a></div>
+      <div class="card p-3 my-4 shadow-sm">
+        <h5>Buat Postingan Baru</h5>
         <form action="/tambah" method="POST">
           <input name="judul" class="form-control mb-2" placeholder="Judul" required>
           <select name="category_id" class="form-select mb-2">${opts}</select>
-          <input name="image_url" class="form-control mb-2" placeholder="Link Foto">
+          <input name="price" class="form-control mb-2" placeholder="Harga (Jika Lapak)">
+          <input name="image_url" class="form-control mb-2" placeholder="URL Foto">
           <textarea name="konten" class="form-control mb-2" placeholder="Isi..." required></textarea>
-          <button class="btn btn-success w-100">Kirim</button>
+          <button class="btn btn-success w-100">Posting</button>
         </form>
       </div>
-    </div><div class="col-md-8"><h3>Daftar Data</h3><table class="table bg-white">
-      ${posts.map(p => `<tr><td>[${p.kategori}] ${p.title}</td><td><a href="/hapus/${p.id}" class="text-danger">Hapus</a></td></tr>`).join('')}
-    </table></div></div>`;
-  res.send(layout(content));
+      <ul class="list-group">${posts.map(p => `<li class="list-group-item d-flex justify-content-between"><span>[${p.kategori}] ${p.title}</span> <a href="/hapus/${p.id}" class="text-danger">Hapus</a></li>`).join('')}</ul>`;
+    res.send(layout(content));
+  } catch (err) { res.send(err.message); }
 });
 
-// 6. PROSES CRUD
+// 5. PROSES CRUD & EXPORT
 app.post('/tambah', auth, async (req, res) => {
-  const { judul, konten, image_url, category_id } = req.body;
-  await sql`INSERT INTO posts (title, content, image_url, category_id) VALUES (${judul}, ${konten}, ${image_url}, ${category_id})`;
+  const { judul, konten, image_url, category_id, price } = req.body;
+  await sql`INSERT INTO posts (title, content, image_url, category_id, price) VALUES (${judul}, ${konten}, ${image_url}, ${category_id}, ${price})`;
   res.redirect('/admin');
 });
 app.get('/hapus/:id', auth, async (req, res) => { await sql`DELETE FROM posts WHERE id = ${req.params.id}`; res.redirect('/admin'); });
 app.get('/like/:id', async (req, res) => { await sql`UPDATE posts SET likes = COALESCE(likes, 0) + 1 WHERE id = ${req.params.id}`; res.redirect('/'); });
+app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
 
+// PENTING: Export untuk Vercel
 module.exports = app;
+
 app.listen(3000, () => console.log("🚀 SID Pandu Jalan!"));
-app.get('/statistik', async (req, res) => {
-  try {
-    const data = await sql`SELECT * FROM penduduk`;
-    const totalL = data.reduce((sum, item) => sum + item.laki_laki, 0);
-    const totalP = data.reduce((sum, item) => sum + item.perempuan, 0);
-
-    let content = `
-      <h2 class="fw-bold mb-4">📊 Statistik Penduduk Desa</h2>
-      <div class="row text-center mb-4">
-        <div class="col-md-6 mb-3">
-          <div class="card bg-primary text-white p-4 shadow-sm">
-            <h5>Total Laki-laki</h5>
-            <h2>${totalL} Jiwa</h2>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card bg-danger text-white p-4 shadow-sm">
-            <h5>Total Perempuan</h5>
-            <h2>${totalP} Jiwa</h2>
-          </div>
-        </div>
-      </div>
-      <table class="table table-bordered bg-white shadow-sm">
-        <thead class="table-success">
-          <tr><th>Nama Dusun</th><th>Laki-laki</th><th>Perempuan</th><th>Total</th></tr>
-        </thead>
-        <tbody>
-          ${data.map(d => `<tr><td>${d.dusun}</td><td>${d.laki_laki}</td><td>${d.perempuan}</td><td>${d.laki_laki + d.perempuan}</td></tr>`).join('')}
-        </tbody>
-      </table>
-    `;
-    res.send(layout(content));
-  } catch (err) { res.send(layout("Gagal memuat statistik: " + err.message)); }
-});
-app.get('/statistik', async (req, res) => {
-  try {
-    const data = await sql`SELECT * FROM penduduk`;
-    const totalL = data.reduce((sum, item) => sum + item.laki_laki, 0);
-    const totalP = data.reduce((sum, item) => sum + item.perempuan, 0);
-
-    let content = `
-      <h2 class="fw-bold mb-4">📊 Statistik Penduduk Desa</h2>
-      <div class="row text-center mb-4">
-        <div class="col-md-6 mb-3">
-          <div class="card bg-primary text-white p-4 shadow-sm border-0">
-            <h5>Total Laki-laki</h5>
-            <h2>${totalL} Jiwa</h2>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card bg-danger text-white p-4 shadow-sm border-0">
-            <h5>Total Perempuan</h5>
-            <h2>${totalP} Jiwa</h2>
-          </div>
-        </div>
-      </div>
-      <div class="table-responsive">
-        <table class="table table-hover bg-white shadow-sm rounded overflow-hidden">
-          <thead class="table-success">
-            <tr><th>Nama Dusun</th><th>Laki-laki</th><th>Perempuan</th><th>Total</th></tr>
-          </thead>
-          <tbody>
-            ${data.map(d => `<tr><td>${d.dusun}</td><td>${d.laki_laki}</td><td>${d.perempuan}</td><td>${d.laki_laki + d.perempuan}</td></tr>`).join('')}
-          </tbody>
-        </table>
-      </div>
-    `;
-    res.send(layout(content));
-  } catch (err) { res.send(layout("Gagal memuat statistik: " + err.message)); }
-});
-app.get('/statistik', async (req, res) => {
-  try {
-    const data = await sql`SELECT * FROM penduduk`;
-    const totalL = data.reduce((sum, item) => sum + item.laki_laki, 0);
-    const totalP = data.reduce((sum, item) => sum + item.perempuan, 0);
-
-    let content = `
-      <h2 class="fw-bold mb-4 text-success">📊 Statistik Penduduk Desa</h2>
-      <div class="row text-center mb-4">
-        <div class="col-md-6 mb-3">
-          <div class="card bg-primary text-white p-4 shadow-sm border-0">
-            <h5>👨 Total Laki-laki</h5>
-            <h2>${totalL} Jiwa</h2>
-          </div>
-        </div>
-        <div class="col-md-6 mb-3">
-          <div class="card bg-danger text-white p-4 shadow-sm border-0">
-            <h5>👩 Total Perempuan</h5>
-            <h2>${totalP} Jiwa</h2>
-          </div>
-        </div>
-      </div>
-      <div class="table-responsive bg-white p-3 rounded shadow-sm">
-        <table class="table table-hover">
-          <thead class="table-success">
-            <tr><th>Nama Dusun</th><th>Laki-laki</th><th>Perempuan</th><th>Total</th></tr>
-          </thead>
-          <tbody>
-            ${data.map(d => `<tr><td>${d.dusun}</td><td>${d.laki_laki}</td><td>${d.perempuan}</td><td>${d.laki_laki + d.perempuan}</td></tr>`).join('')}
-          </tbody>
-        </table>
-      </div>
-    `;
-    res.send(layout(content));
-  } catch (err) { res.send(layout("Gagal memuat statistik: " + err.message)); }
-});
-app.get('/statistik', async (req, res) => {
-  try {
-    const data = await sql`SELECT * FROM penduduk`;
-    const totalL = data.reduce((sum, item) => sum + item.laki_laki, 0);
-    const totalP = data.reduce((sum, item) => sum + item.perempuan, 0);
-
-    let content = `
-      <h2 class="fw-bold mb-4 text-success">📊 Statistik Penduduk Desa</h2>
-      <div class="row text-center mb-4">
-        <div class="col-md-6 mb-3">
-          <div class="card bg-primary text-white p-4 shadow-sm border-0">
-            <h5>👨 Total Laki-laki</h5>
-            <h2>${totalL} Jiwa</h2>
-          </div>
-        </div>
-        <div class="col-md-6 mb-3">
-          <div class="card bg-danger text-white p-4 shadow-sm border-0">
-            <h5>👩 Total Perempuan</h5>
-            <h2>${totalP} Jiwa</h2>
-          </div>
-        </div>
-      </div>
-      <div class="table-responsive bg-white p-3 rounded shadow-sm">
-        <table class="table table-hover">
-          <thead class="table-success">
-            <tr><th>Nama Dusun</th><th>Laki-laki</th><th>Perempuan</th><th>Total</th></tr>
-          </thead>
-          <tbody>
-            ${data.map(d => `<tr><td>${d.dusun}</td><td>${d.laki_laki}</td><td>${d.perempuan}</td><td>${d.laki_laki + d.perempuan}</td></tr>`).join('')}
-          </tbody>
-        </table>
-      </div>
-    `;
-    res.send(layout(content));
-  } catch (err) { res.send(layout("Gagal memuat statistik: " + err.message)); }
-});
-// --- 🛒 HALAMAN LAPAK DESA (KHUSUS PRODUK UMKM) ---
-app.get('/lapak', async (req, res) => {
-  try {
-    const products = await sql`
-      SELECT p.*, c.name as kategori 
-      FROM posts p 
-      JOIN categories c ON p.category_id = c.id 
-      WHERE c.name = '🛒 Lapak Desa'
-      ORDER BY p.id DESC`;
-
-    let html = `<link href="https://cdn.jsdelivr.net" rel="stylesheet">
-                <nav class="navbar navbar-dark bg-success mb-5"><div class="container"><a class="navbar-brand h1" href="/">🌳 SID DESAKU</a><a href="/login" class="btn btn-sm btn-outline-light">Admin</a></div></nav>
-                <div class="container"><h2 class="mb-4">🛒 Lapak UMKM Desa</h2><div class="row">`;
-    
-    products.forEach(p => {
-      html += `
-        <div class="col-md-4 mb-4">
-          <div class="card h-100 border-0 shadow-sm">
-            ${p.image_url ? `<img src="${p.image_url}" class="card-img-top" style="height:200px; object-fit:cover;">` : ''}
-            <div class="card-body">
-              <h5 class="fw-bold">${p.title}</h5>
-              <p class="text-success fw-bold">Rp ${p.price || 'Hubungi Penjual'}</p>
-              <p class="text-muted small">${p.content.substring(0, 80)}...</p>
-              <a href="https://wa.me, saya tertarik dengan ${p.title}" class="btn btn-success w-100 btn-sm">Beli via WhatsApp</a>
-            </div>
-          </div>
-        </div>`;
-    });
-    res.send(html + "</div></div><footer class='text-center py-5'>&copy; 2024 Lapak Desa Digital</footer></body>");
-  } catch (err) { res.send(err.message); }
-});
-<input name="price" class="form-control mb-2" placeholder="Harga Produk (Contoh: 50.000)">
