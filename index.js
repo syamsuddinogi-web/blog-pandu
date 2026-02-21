@@ -56,4 +56,14 @@ app.get('/api/statistik', async (req, res) => {
     res.json({ totalL, totalP, total: totalL + totalP, rincian: data });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
+// --- 📊 API DATA APBDES ---
+app.get('/api/apbdes', async (req, res) => {
+  try {
+    const data = await sql`SELECT * FROM apbdes ORDER BY id ASC`;
+    res.json(data);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Pastikan rute halaman tetap ada
+app.get('/apbdes', (req, res) => res.sendFile(path.join(__dirname, 'apbdes.html')));
 

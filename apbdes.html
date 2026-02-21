@@ -298,6 +298,43 @@ trix-toolbar [data-trix-dialog] [data-trix-validate]:invalid {
                     Pengelolaan Anggaran Pendapatan dan Belanja Desa (APBDES) merupakan bentuk akuntabilitas publik Pemerintah Desa Wani Lumbumpetigo. Kami berkomitmen menyajikan rincian pendapatan dan belanja desa secara transparan untuk meminimalkan risiko korupsi. Setiap rupiah yang dikelola ditujukan sepenuhnya untuk percepatan pembangunan infrastruktur dan pemberdayaan warga.
                 </p>
             </div>
+<div class="table-responsive p-4 bg-white rounded shadow-sm">
+  <h3 class="text-success fw-bold">📊 Transparansi APBDes</h3>
+  <table class="table table-hover mt-3">
+    <thead class="table-success">
+      <tr>
+        <th>Rincian Bidang</th>
+        <th>Anggaran (Rp)</th>
+        <th>Realisasi (Rp)</th>
+        <th>Persentase</th>
+      </tr>
+    </thead>
+    <tbody id="tabel-apbdes">
+      <!-- Data akan masuk otomatis dari Neon -->
+    </tbody>
+  </table>
+</div>
+
+<script>
+  // Script Sakti Penarik Data Anggaran
+  fetch('/api/apbdes')
+    .then(res => res.json())
+    .then(data => {
+      let rows = '';
+      data.forEach(item => {
+        let persen = ((item.realisai / item.anggaran) * 100).toFixed(1);
+        rows += `<tr>
+          <td>${item.rincian}</td>
+          <td>${new Intl.NumberFormat('id-ID').format(item.anggaran)}</td>
+          <td>${new Intl.NumberFormat('id-ID').format(item.realisasi)}</td>
+          <td><span class="badge bg-primary">${persen}%</span></td>
+        </tr>`;
+      });
+      document.getElementById('tabel-apbdes').innerHTML = rows;
+    })
+    .catch(err => console.error("Gagal muat data APBDes:", err));
+</script>
+
             <form action="https://wani-lumbumpetigo-tanantovea.updesa.online/infografis" method="GET">
                 <select name="year" onchange="this.form.submit()" class="bg-white/10 border border-white/20 text-white font-black px-8 py-4 rounded-2xl cursor-pointer hover:bg-white/20 transition-all">
                                             <option value="2026" class="text-slate-900">TAHUN ANGGARAN 2026</option>
