@@ -28,6 +28,8 @@ app.get('/api/apbdes', (req, res) => res.sendFile(path.join(__dirname, 'apbdes.h
 app.get('/artikel', (req, res) => res.sendFile(path.join(__dirname, 'artikel.html')));
 app.get('/kontak', (req, res) => res.sendFile(path.join(__dirname, 'kontak.html')));
 app.get('/digedes', (req, res) => res.sendFile(path.join(__dirname, 'digedes.html')));
+app.get('/penduduk2025', (req, res) => res.sendFile(path.join(__dirname, 'penduduk2025.html')));
+
 
 
 // --- 🔐 SISTEM LOGIN & ADMIN (Tetap Ada) ---
