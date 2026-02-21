@@ -25,6 +25,9 @@ app.get('/listing', (req, res) => res.sendFile(path.join(__dirname, 'listing.htm
 app.get('/idm', (req, res) => res.sendFile(path.join(__dirname, 'idm.html')));
 app.get('/kalender', (req, res) => res.sendFile(path.join(__dirname, 'kalender.html')));
 app.get('/api/apbdes', (req, res) => res.sendFile(path.join(__dirname, 'apbdes.html')));
+app.get('/artikel', (req, res) => res.sendFile(path.join(__dirname, 'artikel.html')));
+app.get('/kontak', (req, res) => res.sendFile(path.join(__dirname, 'kontak.html')));
+app.get('/digides', (req, res) => res.sendFile(path.join(__dirname, 'digides.html')));
 
 
 // --- 🔐 SISTEM LOGIN & ADMIN (Tetap Ada) ---
