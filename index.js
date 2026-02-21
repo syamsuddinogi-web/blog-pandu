@@ -24,6 +24,8 @@ app.get('/ppid', (req, res) => res.sendFile(path.join(__dirname, 'ppid.html')));
 app.get('/listing', (req, res) => res.sendFile(path.join(__dirname, 'listing.html')));
 app.get('/idm', (req, res) => res.sendFile(path.join(__dirname, 'idm.html')));
 app.get('/kalender', (req, res) => res.sendFile(path.join(__dirname, 'kalender.html')));
+app.get('/api/apbdes', (req, res) => res.sendFile(path.join(__dirname, 'apbdes.html')));
+
 
 // --- 🔐 SISTEM LOGIN & ADMIN (Tetap Ada) ---
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'masuk.html'))); // Menggunakan masuk.html kamu

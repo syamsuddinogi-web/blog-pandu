@@ -543,5 +543,33 @@ trix-toolbar [data-trix-dialog] [data-trix-validate]:invalid {
             });
         });
     </script>
+<script>
+  console.log("Mulai menarik data APBDes...");
+  fetch('/api/apbdes')
+    .then(res => res.json())
+    .then(data => {
+      console.log("Data diterima:", data);
+      let rows = '';
+      if(data.length === 0) {
+          rows = '<tr><td colspan="4" class="text-center">Belum ada data anggaran di database Neon.</td></tr>';
+      } else {
+          data.forEach(item => {
+            // Hitung persentase dengan aman
+            let persen = item.anggaran > 0 ? ((item.realisasi / item.anggaran) * 100).toFixed(1) : 0;
+            rows += `<tr>
+              <td class="fw-bold text-dark">${item.rincian}</td>
+              <td>Rp ${new Intl.NumberFormat('id-ID').format(item.anggaran)}</td>
+              <td>Rp ${new Intl.NumberFormat('id-ID').format(item.realisasi)}</td>
+              <td><span class="badge bg-success">${persen}%</span></td>
+            </tr>`;
+          });
+      }
+      document.getElementById('tabel-apbdes').innerHTML = rows;
+    })
+    .catch(err => {
+      console.error("Error:", err);
+      document.getElementById('tabel-apbdes').innerHTML = '<tr><td colspan="4" class="text-danger">Gagal tersambung ke database.</td></tr>';
+    });
+</script>
 
 </body>
