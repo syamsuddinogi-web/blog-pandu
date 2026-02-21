@@ -235,3 +235,39 @@ app.get('/statistik', async (req, res) => {
     res.send(layout(content));
   } catch (err) { res.send(layout("Gagal memuat statistik: " + err.message)); }
 });
+app.get('/statistik', async (req, res) => {
+  try {
+    const data = await sql`SELECT * FROM penduduk`;
+    const totalL = data.reduce((sum, item) => sum + item.laki_laki, 0);
+    const totalP = data.reduce((sum, item) => sum + item.perempuan, 0);
+
+    let content = `
+      <h2 class="fw-bold mb-4 text-success">📊 Statistik Penduduk Desa</h2>
+      <div class="row text-center mb-4">
+        <div class="col-md-6 mb-3">
+          <div class="card bg-primary text-white p-4 shadow-sm border-0">
+            <h5>👨 Total Laki-laki</h5>
+            <h2>${totalL} Jiwa</h2>
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="card bg-danger text-white p-4 shadow-sm border-0">
+            <h5>👩 Total Perempuan</h5>
+            <h2>${totalP} Jiwa</h2>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive bg-white p-3 rounded shadow-sm">
+        <table class="table table-hover">
+          <thead class="table-success">
+            <tr><th>Nama Dusun</th><th>Laki-laki</th><th>Perempuan</th><th>Total</th></tr>
+          </thead>
+          <tbody>
+            ${data.map(d => `<tr><td>${d.dusun}</td><td>${d.laki_laki}</td><td>${d.perempuan}</td><td>${d.laki_laki + d.perempuan}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+    res.send(layout(content));
+  } catch (err) { res.send(layout("Gagal memuat statistik: " + err.message)); }
+});
