@@ -1,0 +1,29 @@
+<script>
+  fetch('/api/penduduk')
+    .then(res => res.json())
+    .then(data => {
+      let totalL = 0, totalP = 0, rows = '';
+      
+      data.forEach(d => {
+        totalL += d.laki_laki;
+        totalP += d.perempuan;
+        rows += `<tr>
+          <td class="fw-bold">${d.nama_dusun}</td>
+          <td>${d.laki_laki}</td>
+          <td>${d.perempuan}</td>
+          <td><span class="badge bg-info">${d.laki_laki + d.perempuan}</span></td>
+        </tr>`;
+      });
+
+      // Update Angka di Box Statistik (Pastikan ID-nya sesuai)
+      if(document.getElementById('total-jiwa')) 
+         document.getElementById('total-jiwa').innerText = (totalL + totalP) + " Jiwa";
+      if(document.getElementById('total-laki')) 
+         document.getElementById('total-laki').innerText = totalL;
+      if(document.getElementById('total-perempuan')) 
+         document.getElementById('total-perempuan').innerText = totalP;
+      
+      // Update Isi Tabel
+      document.getElementById('tabel-penduduk').innerHTML = rows;
+    });
+</script>
