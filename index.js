@@ -108,6 +108,17 @@ app.post('/tambah', auth, async (req, res) => {
 app.get('/hapus/:id', auth, async (req, res) => { await sql`DELETE FROM posts WHERE id = ${req.params.id}`; res.redirect('/admin'); });
 app.get('/like/:id', async (req, res) => { await sql`UPDATE posts SET likes = COALESCE(likes, 0) + 1 WHERE id = ${req.params.id}`; res.redirect('/'); });
 app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
+// Tambahkan ini di bawah posts.forEach di rute '/'
+html += `
+  <div class="mt-5 p-4 bg-white rounded shadow-sm">
+    <h4 class="fw-bold mb-3 text-success">📍 Lokasi Kantor Desa</h4>
+    <div class="ratio ratio-21x9">
+    <iframe src="https://www.google.com/maps/embed?pb=!4v1771645034677!6m8!1m7!1soVFYkqXoauLtChOq5NfIwQ!2m2!1d-0.6862562493640545!2d119.8460371739441!3f295.0199247539397!4f-4.447011670174945!5f0.7820865974627469" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+ 
+    </div>
+    <p class="text-muted mt-2 small">*Alamat: Jl. Poros Desa No. 01, Kec. Digital, Kab. Neon.</p>
+  </div>
+`;
 
 // PENTING: Export untuk Vercel
 module.exports = app;
