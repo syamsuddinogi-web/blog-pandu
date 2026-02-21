@@ -391,5 +391,22 @@
             content: "unfold_less";
         }</style><i class="_access-icon material-icons _access circular" style="width: 50px; height: 50px; font-size: 40px; line-height: 45px; text-indent: 5px; background-color: rgb(64, 84, 178); color: rgb(255, 255, 255); bottom: 10px; right: 180px; z-index: 9999; opacity: 1;" title="Aksesibilitas" tabindex="0">accessible</i><div class="_access-menu _access bottom right type close"><p class="_text-center" role="presentation" tabindex="-1"><button class="_menu-close-btn _menu-btn material-icons" title="Tutup" tabindex="-1">close</button>Aksesibilitas<button class="_menu-reset-btn _menu-btn material-icons" title="Reset" tabindex="-1">refresh</button></p><ul class="_access-scrollbar before-collapse" tabindex="-1"><li tabindex="-1"><button data-access-action="increaseText" tabindex="-1">Perbesar Teks</button></li><li tabindex="-1"><button data-access-action="decreaseText" tabindex="-1">Perkecil Teks</button></li><li tabindex="-1"><button data-access-action="increaseTextSpacing" tabindex="-1">Tambah Jarak Teks</button></li><li tabindex="-1"><button data-access-action="decreaseTextSpacing" tabindex="-1">Kurangi Jarak Teks</button></li><li tabindex="-1"><button data-access-action="increaseLineHeight" tabindex="-1">Tambah Tinggi Teks</button></li><li tabindex="-1"><button data-access-action="decreaseLineHeight" tabindex="-1">Kurangi Tinggi Teks</button></li><li tabindex="-1"><button data-access-action="invertColors" title="Hotkey: ctrl+alt+i" tabindex="-1">Balik Warna</button></li><li tabindex="-1"><button data-access-action="grayHues" title="Hotkey: ctrl+alt+g" tabindex="-1">Warna Abu-Abu</button></li><li tabindex="-1"><button data-access-action="underlineLinks" title="Hotkey: ctrl+alt+u" tabindex="-1">Garis Bawahi Teks</button></li><li tabindex="-1"><button data-access-action="bigCursor" title="Hotkey: ctrl+alt+c" tabindex="-1"><svg version="1.1" id="iconBigCursorSvg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="position: absolute;width: 19px;height: 19px;left: 17px;top: 9px; left: 9px;enable-background:new 0 0 512 512;" xml:space="preserve"><path d="M 423.547 323.115 l -320 -320 c -3.051 -3.051 -7.637 -3.947 -11.627 -2.304 s -6.592 5.547 -6.592 9.856 V 480 c 0 4.501 2.837 8.533 7.083 10.048 c 4.224 1.536 8.981 0.192 11.84 -3.285 l 85.205 -104.128 l 56.853 123.179 c 1.792 3.883 5.653 6.187 9.685 6.187 c 1.408 0 2.837 -0.277 4.203 -0.875 l 74.667 -32 c 2.645 -1.131 4.736 -3.285 5.76 -5.973 c 1.024 -2.688 0.939 -5.675 -0.277 -8.299 l -57.024 -123.52 h 132.672 c 4.309 0 8.213 -2.603 9.856 -6.592 C 427.515 330.752 426.598 326.187 423.547 323.115 Z"></path></svg>Perbesar Kursor</button></li><li tabindex="-1"><button data-access-action="readingGuide" title="Hotkey: ctrl+alt+r" tabindex="-1">Alat Bantu Baca</button></li><li tabindex="-1"><button data-access-action="disableAnimations">Matikan Animasi</button></li></ul></div>
         <textarea tabindex="-1" aria-hidden="true" style="min-height: 0px !important; max-height: none !important; height: 0px !important; visibility: hidden !important; overflow: hidden !important; position: absolute !important; z-index: -1000 !important; top: 0px !important; right: 0px !important; border-width: 1px; box-sizing: border-box; font-family: Outfit; font-size: 18px; font-style: normal; font-weight: 400; letter-spacing: normal; line-height: 27.9px; padding: 9.5px 16.6667px; tab-size: 8; text-indent: 0px; text-rendering: auto; text-transform: none; width: 1104px; word-break: normal;"></textarea>
- 
+ <!-- Bagian yang akan berubah otomatis -->
+<div class="stats-box">
+  <h3>Total Penduduk: <span id="total-jiwa">Memuat...</span></h3>
+  <p>Laki-laki: <span id="laki-laki">0</span> | Perempuan: <span id="perempuan">0</span></p>
+</div>
+
+<script>
+  // Script Sakti Penarik Data dari Neon
+  fetch('/api/statistik')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('total-jiwa').innerText = data.total + " Jiwa";
+      document.getElementById('laki-laki').innerText = data.totalL;
+      document.getElementById('perempuan').innerText = data.totalP;
+    })
+    .catch(err => console.error("Gagal ambil data Neon:", err));
+</script>
+
         </body>

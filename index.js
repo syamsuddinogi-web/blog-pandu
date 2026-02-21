@@ -18,7 +18,11 @@ app.get('/apbdes', (req, res) => res.sendFile(path.join(__dirname, 'apbdes.html'
 app.get('/galeri', (req, res) => res.sendFile(path.join(__dirname, 'galeri.html')));
 app.get('/lapak', (req, res) => res.sendFile(path.join(__dirname, 'lapak.html')));
 app.get('/infografis', (req, res) => res.sendFile(path.join(__dirname, 'infografis.html')));
-app.get('/kabar-desa', (req, res) => res.sendFile(path.join(__dirname, 'listing.html')));
+app.get('/kabardesa', (req, res) => res.sendFile(path.join(__dirname, 'kabardesa.html')));
+app.get('/belanja', (req, res) => res.sendFile(path.join(__dirname, 'belanja.html')));
+app.get('/ppid', (req, res) => res.sendFile(path.join(__dirname, 'ppid.html')));
+app.get('/listing', (req, res) => res.sendFile(path.join(__dirname, 'listing.html')));
+app.get('/idm', (req, res) => res.sendFile(path.join(__dirname, 'listing.idm')));
 
 // --- 🔐 SISTEM LOGIN & ADMIN (Tetap Ada) ---
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'masuk.html'))); // Menggunakan masuk.html kamu
@@ -36,3 +40,19 @@ app.get('/admin', (req, res) => {
 // EXPORT UNTUK VERCEL
 module.exports = app;
 app.listen(3000, () => console.log("🚀 SID Wani Lumbumpetigo Online!"));
+
+// --- 📊 HALAMAN STATISTIK PENDUDUK ---
+app.get('/penduduk', (req, res) => {
+  // Mengirim file html penduduk yang kamu miliki
+  res.sendFile(path.join(__dirname, 'infografis.html')); 
+});
+// --- 📡 API DATA PENDUKUNG (UNTUK HTML) ---
+app.get('/api/statistik', async (req, res) => {
+  try {
+    const data = await sql`SELECT * FROM penduduk`;
+    const totalL = data.reduce((sum, item) => sum + item.laki_laki, 0);
+    const totalP = data.reduce((sum, item) => sum + item.perempuan, 0);
+    res.json({ totalL, totalP, total: totalL + totalP, rincian: data });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
