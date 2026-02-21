@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalender Indonesia 2025</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/png" href="https://res.cloudinary.com/di8stbg60/image/upload/v1757245484/SYAMDIGITAL-LOGO-2025_mmpllg.png">
+  <link rel="apple-touch-icon" href="https://res.cloudinary.com/di8stbg60/image/upload/v1757245484/SYAMDIGITAL-LOGO-2025_mmpllg.png">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    .font-display {
+      font-family: 'Playfair Display', serif;
+    }
+    .font-body {
+      font-family: 'Inter', sans-serif;
+    }
+    .today-marker {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+      50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.8); }
+    }
+    .nav-btn {
+      transition: all 0.3s ease;
+    }
+    .nav-btn:hover {
+      transform: scale(1.1);
+      background: rgba(255,255,255,0.2);
+    }
+    .holiday-marker {
+      background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    }
+    .islamic-marker {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    }
+    .holiday-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .modal-overlay {
+      backdrop-filter: blur(4px);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full font-body">
+  <div id="app" class="h-full w-full overflow-auto" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
+   <div class="min-h-full w-full flex items-center justify-center p-4 md:p-6">
+    <div class="w-full max-w-4xl"><!-- Header with Navigation -->
+     <div class="text-center mb-6 md:mb-8">
+      <div class="flex items-center justify-center gap-4 md:gap-8 mb-2"><button id="prev-btn" class="nav-btn w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white text-2xl" style="background: rgba(255,255,255,0.1);"> ‹ </button>
+       <div>
+        <h1 id="month-title" class="font-display text-4xl md:text-6xl font-bold text-white tracking-wide" style="text-shadow: 0 4px 20px rgba(255,255,255,0.1);"></h1>
+        <p id="year-text" class="text-xl md:text-3xl font-light tracking-[0.3em] text-amber-400"></p>
+       </div><button id="next-btn" class="nav-btn w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-white text-2xl" style="background: rgba(255,255,255,0.1);"> › </button>
+      </div><button id="today-btn" class="mt-2 px-4 py-1 text-sm text-blue-300 hover:text-white transition-colors rounded-full" style="background: rgba(59, 130, 246, 0.2);"> Hari Ini </button>
+     </div><!-- Calendar Container -->
+     <div class="rounded-2xl overflow-hidden shadow-2xl" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);"><!-- Days Header -->
+      <div class="grid grid-cols-7 text-center py-3 md:py-4" style="background: rgba(255,255,255,0.08);">
+       <div class="text-red-400 font-semibold text-xs md:text-base py-2">
+        MINGGU
+       </div>
+       <div class="text-gray-300 font-semibold text-xs md:text-base py-2">
+        SENIN
+       </div>
+       <div class="text-gray-300 font-semibold text-xs md:text-base py-2">
+        SELASA
+       </div>
+       <div class="text-gray-300 font-semibold text-xs md:text-base py-2">
+        RABU
+       </div>
+       <div class="text-gray-300 font-semibold text-xs md:text-base py-2">
+        KAMIS
+       </div>
+       <div class="text-gray-300 font-semibold text-xs md:text-base py-2">
+        JUM'AT
+       </div>
+       <div class="text-amber-400 font-semibold text-xs md:text-base py-2">
+        SABTU
+       </div>
+      </div><!-- Calendar Grid -->
+      <div id="calendar-grid" class="grid grid-cols-7 gap-px" style="background: rgba(255,255,255,0.05);">
+      </div>
+     </div><!-- Holiday List for Current Month -->
+     <div id="holiday-list" class="mt-6 rounded-xl p-4" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+      <h3 class="text-white font-semibold mb-3 text-sm md:text-base">📅 Hari Libur &amp; Hari Besar Bulan Ini:</h3>
+      <div id="holiday-items" class="space-y-2 text-sm">
+      </div>
+     </div><!-- Footer Legend -->
+     <div class="text-center mt-4 md:mt-6 text-gray-400 text-xs md:text-sm"><span class="inline-flex items-center gap-2 flex-wrap justify-center"> <span class="inline-flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-blue-500"></span> Hari Ini</span> <span class="inline-flex items-center gap-1 ml-3"><span class="w-3 h-3 rounded-full bg-red-500"></span> Libur Nasional</span> <span class="inline-flex items-center gap-1 ml-3"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Hari Besar Islam</span> <span class="inline-flex items-center gap-1 ml-3"><span class="w-3 h-3 rounded-full bg-amber-400"></span> Sabtu</span> </span>
+     </div>
+    </div>
+   </div>
+  </div><!-- Holiday Detail Modal -->
+  <div id="holiday-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-overlay" style="background: rgba(0,0,0,0.7);">
+   <div class="bg-slate-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-slate-600">
+    <div class="flex justify-between items-start mb-4">
+     <h3 id="modal-date" class="text-2xl font-bold text-white"></h3><button id="close-modal" class="text-gray-400 hover:text-white text-2xl">×</button>
+    </div>
+    <div id="modal-content" class="space-y-3">
+    </div>
+   </div>
+  </div>
+  <script>
+    // Indonesian month names
+    const monthNames = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
+
+    // Current display state
+    let currentDate = new Date();
+    let displayMonth = currentDate.getMonth();
+    let displayYear = currentDate.getFullYear();
+
+    // Get today's date info
+    const today = new Date();
+    const todayDate = today.getDate();
+    const todayMonth = today.getMonth();
+    const todayYear = today.getFullYear();
+
+    // Comprehensive holidays database
+    // Format: 'day-month-year': { name, type: 'national'|'islamic'|'other', emoji }
+    const holidays = {
+      // ========== 2025 ==========
+      // Januari 2025
+      '1-0-2025': { name: 'Tahun Baru Masehi', type: 'national', emoji: '🎉' },
+      '27-0-2025': { name: 'Isra Miraj Nabi Muhammad SAW', type: 'islamic', emoji: '🕌' },
+      '29-0-2025': { name: 'Tahun Baru Imlek 2576', type: 'national', emoji: '🧧' },
+      
+      // Februari 2025
+      '12-1-2025': { name: 'Maulid Nabi Muhammad SAW', type: 'islamic', emoji: '🕌' },
+      
+      // Maret 2025
+      '28-2-2025': { name: 'Awal Puasa Ramadhan 1446 H', type: 'islamic', emoji: '🌙' },
+      '29-2-2025': { name: 'Hari Raya Nyepi', type: 'national', emoji: '🙏' },
+      
+      // April 2025
+      '18-3-2025': { name: 'Wafat Isa Al-Masih', type: 'national', emoji: '✝️' },
+      '20-3-2025': { name: 'Paskah', type: 'other', emoji: '✝️' },
+      
+      // Mei 2025 - Lebaran (perkiraan)
+      '1-4-2025': { name: 'Hari Buruh Internasional', type: 'national', emoji: '👷' },
+      '12-4-2025': { name: 'Hari Raya Waisak 2569', type: 'national', emoji: '🪷' },
+      '29-4-2025': { name: 'Kenaikan Isa Al-Masih', type: 'national', emoji: '✝️' },
+      
+      // Juni 2025
+      '1-5-2025': { name: 'Hari Lahir Pancasila', type: 'national', emoji: '🇮🇩' },
+      '6-5-2025': { name: 'Idul Adha 1446 H', type: 'islamic', emoji: '🐪' },
+      '7-5-2025': { name: 'Cuti Bersama Idul Adha', type: 'national', emoji: '🐪' },
+      '27-5-2025': { name: 'Tahun Baru Islam 1447 H', type: 'islamic', emoji: '🕌' },
+      
+      // Juli 2025
+      
+      // Agustus 2025
+      '17-7-2025': { name: 'Hari Kemerdekaan RI', type: 'national', emoji: '🇮🇩' },
+      
+      // September 2025
+      '5-8-2025': { name: 'Maulid Nabi Muhammad SAW', type: 'islamic', emoji: '🕌' },
+      
+      // Oktober 2025
+      
+      // November 2025
+      
+      // Desember 2025
+      '25-11-2025': { name: 'Hari Raya Natal', type: 'national', emoji: '🎄' },
+      '26-11-2025': { name: 'Cuti Bersama Natal', type: 'national', emoji: '🎄' },
+
+      // ========== 2024 ==========
+      '1-0-2024': { name: 'Tahun Baru Masehi', type: 'national', emoji: '🎉' },
+      '8-1-2024': { name: 'Isra Miraj Nabi Muhammad SAW', type: 'islamic', emoji: '🕌' },
+      '10-1-2024': { name: 'Tahun Baru Imlek 2575', type: 'national', emoji: '🧧' },
+      '11-2-2024': { name: 'Hari Raya Nyepi', type: 'national', emoji: '🙏' },
+      '29-2-2024': { name: 'Wafat Isa Al-Masih', type: 'national', emoji: '✝️' },
+      '31-2-2024': { name: 'Paskah', type: 'other', emoji: '✝️' },
+      '10-3-2024': { name: 'Idul Fitri 1445 H', type: 'islamic', emoji: '🕌' },
+      '11-3-2024': { name: 'Idul Fitri 1445 H', type: 'islamic', emoji: '🕌' },
+      '1-4-2024': { name: 'Hari Buruh Internasional', type: 'national', emoji: '👷' },
+      '9-4-2024': { name: 'Kenaikan Isa Al-Masih', type: 'national', emoji: '✝️' },
+      '23-4-2024': { name: 'Hari Raya Waisak 2568', type: 'national', emoji: '🪷' },
+      '1-5-2024': { name: 'Hari Lahir Pancasila', type: 'national', emoji: '🇮🇩' },
+      '17-5-2024': { name: 'Idul Adha 1445 H', type: 'islamic', emoji: '🐪' },
+      '18-5-2024': { name: 'Cuti Bersama Idul Adha', type: 'national', emoji: '🐪' },
+      '7-6-2024': { name: 'Tahun Baru Islam 1446 H', type: 'islamic', emoji: '🕌' },
+      '17-7-2024': { name: 'Hari Kemerdekaan RI', type: 'national', emoji: '🇮🇩' },
+      '16-8-2024': { name: 'Maulid Nabi Muhammad SAW', type: 'islamic', emoji: '🕌' },
+      '25-11-2024': { name: 'Hari Raya Natal', type: 'national', emoji: '🎄' },
+
+      // ========== 2026 ==========
+      '1-0-2026': { name: 'Tahun Baru Masehi', type: 'national', emoji: '🎉' },
+      '17-0-2026': { name: 'Tahun Baru Imlek 2577', type: 'national', emoji: '🧧' },
+      '16-1-2026': { name: 'Isra Miraj Nabi Muhammad SAW', type: 'islamic', emoji: '🕌' },
+      '17-2-2026': { name: 'Awal Puasa Ramadhan 1447 H', type: 'islamic', emoji: '🌙' },
+      '19-2-2026': { name: 'Hari Raya Nyepi', type: 'national', emoji: '🙏' },
+      '20-2-2026': { name: 'Idul Fitri 1447 H', type: 'islamic', emoji: '🕌' },
+      '21-2-2026': { name: 'Idul Fitri 1447 H', type: 'islamic', emoji: '🕌' },
+      '3-3-2026': { name: 'Wafat Isa Al-Masih', type: 'national', emoji: '✝️' },
+      '5-3-2026': { name: 'Paskah', type: 'other', emoji: '✝️' },
+      '1-4-2026': { name: 'Hari Buruh Internasional', type: 'national', emoji: '👷' },
+      '14-4-2026': { name: 'Kenaikan Isa Al-Masih', type: 'national', emoji: '✝️' },
+      '27-4-2026': { name: 'Idul Adha 1447 H', type: 'islamic', emoji: '🐪' },
+      '17-5-2026': { name: 'Tahun Baru Islam 1448 H', type: 'islamic', emoji: '🕌' },
+      '31-4-2026': { name: 'Hari Raya Waisak 2570', type: 'national', emoji: '🪷' },
+      '1-5-2026': { name: 'Hari Lahir Pancasila', type: 'national', emoji: '🇮🇩' },
+      '17-7-2026': { name: 'Hari Kemerdekaan RI', type: 'national', emoji: '🇮🇩' },
+      '26-7-2026': { name: 'Maulid Nabi Muhammad SAW', type: 'islamic', emoji: '🕌' },
+      '25-11-2026': { name: 'Hari Raya Natal', type: 'national', emoji: '🎄' },
+    };
+
+    // Ramadhan/Lebaran 2025 (perkiraan)
+    // Awal Ramadhan: 28 Maret 2025
+    // Idul Fitri: 28-29 April 2025
+    holidays['28-3-2025'] = { name: 'Idul Fitri 1446 H', type: 'islamic', emoji: '🕌' };
+    holidays['29-3-2025'] = { name: 'Idul Fitri 1446 H (Hari ke-2)', type: 'islamic', emoji: '🕌' };
+    holidays['30-3-2025'] = { name: 'Cuti Bersama Idul Fitri', type: 'national', emoji: '🕌' };
+    holidays['25-3-2025'] = { name: 'Cuti Bersama Idul Fitri', type: 'national', emoji: '🕌' };
+    holidays['26-3-2025'] = { name: 'Cuti Bersama Idul Fitri', type: 'national', emoji: '🕌' };
+
+    function getDaysInMonth(month, year) {
+      return new Date(year, month + 1, 0).getDate();
+    }
+
+    function getFirstDayOfMonth(month, year) {
+      return new Date(year, month, 1).getDay();
+    }
+
+    function getHoliday(day, month, year) {
+      const key = `${day}-${month}-${year}`;
+      return holidays[key] || null;
+    }
+
+    function getMonthHolidays(month, year) {
+      const monthHolidays = [];
+      const daysInMonth = getDaysInMonth(month, year);
+      
+      for (let day = 1; day <= daysInMonth; day++) {
+        const holiday = getHoliday(day, month, year);
+        if (holiday) {
+          monthHolidays.push({ day, ...holiday });
+        }
+      }
+      return monthHolidays;
+    }
+
+    function renderHolidayList() {
+      const container = document.getElementById('holiday-items');
+      const monthHolidays = getMonthHolidays(displayMonth, displayYear);
+      
+      if (monthHolidays.length === 0) {
+        container.innerHTML = '<p class="text-gray-400 italic">Tidak ada hari libur bulan ini</p>';
+        return;
+      }
+      
+      container.innerHTML = monthHolidays.map(h => {
+        const bgColor = h.type === 'islamic' ? 'bg-emerald-500/20 border-emerald-500/30' : 
+                        h.type === 'national' ? 'bg-red-500/20 border-red-500/30' : 
+                        'bg-amber-500/20 border-amber-500/30';
+        const textColor = h.type === 'islamic' ? 'text-emerald-300' : 
+                          h.type === 'national' ? 'text-red-300' : 'text-amber-300';
+        
+        return `
+          <div class="flex items-center gap-3 p-2 rounded-lg border ${bgColor}">
+            <span class="text-xl">${h.emoji}</span>
+            <div>
+              <span class="text-white font-medium">${h.day} ${monthNames[displayMonth]}</span>
+              <span class="${textColor} ml-2">${h.name}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function showHolidayModal(day, month, year) {
+      const holiday = getHoliday(day, month, year);
+      if (!holiday) return;
+      
+      const modal = document.getElementById('holiday-modal');
+      const modalDate = document.getElementById('modal-date');
+      const modalContent = document.getElementById('modal-content');
+      
+      modalDate.textContent = `${day} ${monthNames[month]} ${year}`;
+      
+      const bgColor = holiday.type === 'islamic' ? 'bg-emerald-500/20' : 
+                      holiday.type === 'national' ? 'bg-red-500/20' : 'bg-amber-500/20';
+      const textColor = holiday.type === 'islamic' ? 'text-emerald-300' : 
+                        holiday.type === 'national' ? 'text-red-300' : 'text-amber-300';
+      const typeLabel = holiday.type === 'islamic' ? 'Hari Besar Islam' : 
+                        holiday.type === 'national' ? 'Libur Nasional' : 'Hari Peringatan';
+      
+      modalContent.innerHTML = `
+        <div class="flex items-center gap-3 p-4 rounded-xl ${bgColor}">
+          <span class="text-4xl">${holiday.emoji}</span>
+          <div>
+            <p class="text-white font-bold text-lg">${holiday.name}</p>
+            <p class="${textColor} text-sm">${typeLabel}</p>
+          </div>
+        </div>
+      `;
+      
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('holiday-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function renderCalendar() {
+      const grid = document.getElementById('calendar-grid');
+      const monthTitle = document.getElementById('month-title');
+      const yearText = document.getElementById('year-text');
+
+      // Update header
+      monthTitle.textContent = monthNames[displayMonth];
+      yearText.textContent = displayYear;
+
+      // Calculate calendar data
+      const daysInMonth = getDaysInMonth(displayMonth, displayYear);
+      const firstDay = getFirstDayOfMonth(displayMonth, displayYear);
+      const daysInPrevMonth = getDaysInMonth(displayMonth - 1, displayYear);
+
+      // Clear existing grid
+      grid.innerHTML = '';
+
+      // Calculate total cells needed (6 rows x 7 days = 42)
+      const totalCells = 42;
+      let dayCounter = 1;
+      let nextMonthDay = 1;
+
+      for (let i = 0; i < totalCells; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'text-center py-2 md:py-4 transition-all cursor-pointer font-medium relative min-h-[50px] md:min-h-[60px] flex flex-col items-center justify-center';
+
+        const dayOfWeek = i % 7;
+        let dateNum, isCurrentMonth = true, isToday = false;
+        let cellMonth = displayMonth;
+        let cellYear = displayYear;
+
+        if (i < firstDay) {
+          // Previous month days
+          dateNum = daysInPrevMonth - firstDay + i + 1;
+          isCurrentMonth = false;
+          cellMonth = displayMonth - 1;
+          if (cellMonth < 0) {
+            cellMonth = 11;
+            cellYear--;
+          }
+        } else if (dayCounter <= daysInMonth) {
+          // Current month days
+          dateNum = dayCounter;
+          isToday = (dateNum === todayDate && displayMonth === todayMonth && displayYear === todayYear);
+          dayCounter++;
+        } else {
+          // Next month days
+          dateNum = nextMonthDay;
+          isCurrentMonth = false;
+          cellMonth = displayMonth + 1;
+          if (cellMonth > 11) {
+            cellMonth = 0;
+            cellYear++;
+          }
+          nextMonthDay++;
+        }
+
+        const holiday = getHoliday(dateNum, cellMonth, cellYear);
+
+        // Apply styles
+        if (!isCurrentMonth) {
+          cell.className += ' text-gray-500 hover:bg-white/5';
+          cell.style.background = 'rgba(0,0,0,0.2)';
+        } else if (isToday) {
+          cell.className += ' today-marker text-white font-bold rounded-lg';
+        } else if (holiday) {
+          if (holiday.type === 'islamic') {
+            cell.className += ' islamic-marker text-white font-bold rounded-lg';
+          } else if (holiday.type === 'national') {
+            cell.className += ' holiday-marker text-white font-bold rounded-lg';
+          } else {
+            cell.className += ' text-amber-300 hover:bg-amber-400/10';
+            cell.style.background = 'rgba(255,255,255,0.02)';
+          }
+        } else if (dayOfWeek === 0) {
+          // Sunday
+          cell.className += ' text-red-400 hover:bg-red-400/10';
+          cell.style.background = 'rgba(255,255,255,0.02)';
+        } else if (dayOfWeek === 6) {
+          // Saturday
+          cell.className += ' text-amber-400 hover:bg-amber-400/10';
+          cell.style.background = 'rgba(255,255,255,0.02)';
+        } else {
+          cell.className += ' text-white hover:bg-white/10';
+          cell.style.background = 'rgba(255,255,255,0.02)';
+        }
+
+        // Build cell content
+        let cellContent = `<span class="text-sm md:text-base">${dateNum}</span>`;
+        
+        if (isToday) {
+          cellContent += `<span class="text-[7px] md:text-[9px] text-blue-200 font-normal mt-0.5">HARI INI</span>`;
+        }
+        
+        if (holiday && isCurrentMonth) {
+          cellContent += `<span class="absolute -top-0.5 -right-0.5 md:-top-1 md:-right-1 text-[10px] md:text-xs">${holiday.emoji}</span>`;
+          
+          // Add click handler for holiday detail
+          cell.addEventListener('click', () => showHolidayModal(dateNum, cellMonth, cellYear));
+        }
+        
+        cell.innerHTML = cellContent;
+        grid.appendChild(cell);
+      }
+      
+      // Render holiday list
+      renderHolidayList();
+    }
+
+    function navigateMonth(direction) {
+      displayMonth += direction;
+      if (displayMonth > 11) {
+        displayMonth = 0;
+        displayYear++;
+      } else if (displayMonth < 0) {
+        displayMonth = 11;
+        displayYear--;
+      }
+      renderCalendar();
+    }
+
+    function goToToday() {
+      displayMonth = todayMonth;
+      displayYear = todayYear;
+      renderCalendar();
+    }
+
+    // Event listeners
+    document.getElementById('prev-btn').addEventListener('click', () => navigateMonth(-1));
+    document.getElementById('next-btn').addEventListener('click', () => navigateMonth(1));
+    document.getElementById('today-btn').addEventListener('click', goToToday);
+    document.getElementById('close-modal').addEventListener('click', closeModal);
+    document.getElementById('holiday-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'holiday-modal') closeModal();
+    });
+
+    // Initial render
+    renderCalendar();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b0685811304ef6a',t:'MTc2NjE0MzM0MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
