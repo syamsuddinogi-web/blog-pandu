@@ -1,150 +1,72 @@
-<!DOCTYPE html>
-<html lang="id">
-<br>
-
-<center>
-<img src="https://res.cloudinary.com/dpr2vc3b0/image/upload/v1771765333/musrembangdesa_poyin5.png" style="width:100%; height:auto;" alt="Musrembangdesa">
-
-</center>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desain Spanduk Musrenbang Desa</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-    <!-- Container Utama (Rasio 4:1) -->
-    <div class="banner-container">
-        
-        <!-- Sisi Kiri: Logo Pemda -->
-        <div class="logo-section">
-            <img src="https://res.cloudinary.com/dpr2vc3b0/image/upload/v1771764891/logo_donggala-fix-2025_mmsxle.png" alt="Logo Kabupaten">
-            <!-- Ganti URL gambar di atas dengan logo kabupaten Anda -->
-        </div>
-
-        <!-- Tengah: Teks Utama -->
-        <div class="content-section">
-            <h4>PEMERINTAH KABUPATEN DONGGALA</h4>
-            <h4>KECAMATAN TANANTOVEA</h4>
-            <h3>PEMERINTAH DESA WANI LUMBUMPETIGO</h3>
-            
-            <h1>MUSRENBANG DESA</h1>
-            
-            <p class="tema">"Pembahasan Rancangan RKP Desa Tahun 2026 dan Daftar Usulan RKP Tahun 2027"</p>
-            
-            <div class="footer-info">
-                <span>Wani Lumbumpetigo, 24 FEBRUARI 2026</span>
-            </div>
-        </div>
-
-        <!-- Sisi Kanan: Logo Kemendesa / SDGs -->
-        <div class="logo-section">
-            <img src="https://res.cloudinary.com/dpr2vc3b0/image/upload/v1771764891/download__3_-removebg-preview_tqf8q7.png" alt="Logo Kemendesa">
-        </div>
-
+<div class="banner-container">
+    <!-- Overlay Foto di Bagian Bawah -->
+    <div class="photo-overlay">
+        <img src="https://res.cloudinary.com/dpr2vc3b0/image/upload/v1771765333/musrembangdesa_poyin5.png" alt="Foto Musrenbang">
     </div>
 
-</body>
+    <!-- Sisi Kiri: Logo Pemda -->
+    <div class="logo-section">
+        <img src="https://res.cloudinary.com/dpr2vc3b0/image/upload/v1771764891/logo_donggala-fix-2025_mmsxle.png" alt="Logo Kabupaten">
+    </div>
 
+    <!-- Tengah: Teks Utama -->
+    <div class="content-section">
+        <h4>PEMERINTAH KABUPATEN DONGGALA</h4>
+        <h4>KECAMATAN TANANTOVEA</h4>
+        <h3>PEMERINTAH DESA WANI LUMBUMPETIGO</h3>
+        <h1>MUSRENBANG DESA</h1>
+        <p class="tema">"Pembahasan Rancangan RKP Desa Tahun 2026 dan Daftar Usulan RKP Tahun 2027"</p>
+        <p class="tema">"TINGKATKAN KEBERSAMAAN DEMI SUKSESNYA PEMBANGUNAN"</p>
+        <div class="footer-info"><span>Wani Lumbumpetigo, 22 FEBRUARI 2026</span></div>
+    </div>
 
-</html>
+    <!-- Sisi Kanan: Logo Kemendesa -->
+    <div class="logo-section">
+        <img src="https://res.cloudinary.com/dpr2vc3b0/image/upload/v1771764891/download__3_-removebg-preview_tqf8q7.png" alt="Logo Kemendesa">
+    </div>
+</div>
+
 <style>
-/* Reset Margin */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Arial', sans-serif;
-}
-
-body {
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-/* Ukuran Spanduk 300cm x 75cm (Skala Visual) */
+/* Container Utama diset Relative agar overlay bisa diatur posisinya */
 .banner-container {
-    width: 1200px; /* Skala dari 300cm */
-    height: 300px; /* Skala dari 75cm */
-    background: linear-gradient(135deg, #ffffff 0%, #e6f2ff 100%);
-    border: 5px solid #004a99;
-    display: flex;
-    align-items: center;
-    padding: 20px 40px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     position: relative;
+    z-index: 1;
     overflow: hidden;
 }
 
-/* Variasi Dekorasi Background */
-.banner-container::before {
-    content: "";
+/* Pengaturan Foto di Bagian Bawah */
+.photo-overlay {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 10px;
-    background: #ffcc00; /* Aksen Kuning */
-}
-
-/* Bagian Logo */
-.logo-section {
-    flex: 1;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* Menutupi area bawah */
+    z-index: -1; /* Berada di belakang teks */
+    opacity: 0.25; /* Dibuat transparan agar teks terbaca jelas */
     display: flex;
-    justify-content: center;
-    align-items: center;
+    align-items: flex-end;
 }
 
-.logo-section img {
-    max-height: 180px;
-    max-width: 150px;
-    object-fit: contain;
+.photo-overlay img {
+    width: 100%;
+    height: 80%; /* Foto muncul dari bawah ke tengah */
+    object-fit: cover;
+    /* Efek fade agar menyatu dengan background putih di atas */
+    mask-image: linear-gradient(to top, rgba(0,0,0,1) 30%, rgba(0,0,0,0));
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 30%, rgba(0,0,0,0));
 }
 
-/* Bagian Teks Tengah */
-.content-section {
-    flex: 4;
-    text-align: center;
-    color: #003366;
-}
-
-.content-section h4 {
-    font-size: 18px;
-    font-weight: normal;
-    letter-spacing: 1px;
-}
-
-.content-section h3 {
-    font-size: 22px;
-    margin-bottom: 10px;
-    border-bottom: 2px solid #004a99;
-    display: inline-block;
-    padding-bottom: 5px;
-}
-
+/* Mempertebal Teks agar tetap kontras di atas foto */
 .content-section h1 {
-    font-size: 55px;
-    color: #e60000; /* Merah Mencolok */
-    text-transform: uppercase;
-    margin: 5px 0;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    font-size: 60px;
+    color: #cc0000;
+    text-shadow: 2px 2px 5px white, -2px -2px 5px white; /* Outline putih agar terbaca */
 }
 
 .tema {
-    font-size: 18px;
-    font-style: italic;
-    font-weight: bold;
-    color: #333;
-    margin-top: 5px;
-}
-
-.footer-info {
-    margin-top: 15px;
-    font-weight: bold;
-    font-size: 16px;
-    color: #555;
+    background: rgba(255, 255, 255, 0.7); /* Latar sedikit putih di belakang tema */
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
 }
 </style>
-
