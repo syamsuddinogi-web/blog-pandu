@@ -29,6 +29,8 @@ app.get('/artikel', (req, res) => res.sendFile(path.join(__dirname, 'artikel.htm
 app.get('/kontak', (req, res) => res.sendFile(path.join(__dirname, 'kontak.html')));
 app.get('/digedes', (req, res) => res.sendFile(path.join(__dirname, 'digedes.html')));
 app.get('/penduduk2025', (req, res) => res.sendFile(path.join(__dirname, 'penduduk2025.html')));
+app.get('/banner', (req, res) => res.sendFile(path.join(__dirname, 'banner.html')));
+app.get('/website-wani-lumbumpetigo', (req, res) => res.sendFile(path.join(__dirname, 'website-wani-lumbumpetigo.JPG')));
 
 
 
