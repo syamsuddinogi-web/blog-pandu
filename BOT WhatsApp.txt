@@ -1,0 +1,73 @@
+1. Cara Cek Log (Sangat Penting)
+Karena sekarang bot jalan di background, kamu tidak bisa lihat log pesan masuk secara langsung. Untuk melihat apa yang sedang terjadi (termasuk scan QR kalau perlu), ketik:
+perintah
+pm2 logs bot
+
+
+(Tekan Ctrl + C untuk keluar dari tampilan log, tenang... bot tetap jalan kok).
+
+2. Cara Mematikan/Restart Bot
+Jika Anda ingin memperbarui kode atau bot mengalami masalah:
+
+Mulai ulang: pm2 restart bot
+Matikan: pm2 stop bot
+Hapus dari list: pm2 delete bot
+
+3. Biar Bot Hidup Lagi Kalau Komputer Restart
+Supaya kalau Windows kamu reboot, bot-nya otomatis nyala lagi:
+
+perintah
+pm2 save
+
+
+4. Cek Status
+Ketik pm2 status atau pm2 list 
+
+untuk melihat apakah bot masih "Online" dan berapa banyak memori yang dipakai.
+
+Saran Penting:
+Coba ketik pm2 logs bot sekarang, lalu tes kirim pesan !tanya halo dari WhatsApp. Perhatikan di layar CMD, apakah ada aktivitas pesan masuk yang tercatat?
+Mau lanjut bikin fitur apa lagi, atau sudah siap pamer ke teman-teman via WhatsApp?
+
+====================================================================================
+
+Tenang, kalau sudah pakai PM2 , menutup CMD bukan lagi masalah!
+Itulah gunanya PM2: dia menjaga bot kamu tetap hidup di latar belakang (background) meskipun jendela hitam CMD kamu tutup.
+Cara Cek Bot Kamu (Tanpa Harus Menjalankan Ulang):
+Cukup buka CMD baru, lalu ketik perintah ini:
+
+Cek Status:
+perintah
+
+pm2 status
+
+
+Lihat kolom status. Kalau warnanya hijau dan tulisannya online, berarti bot kamu masih jalan dan siap balas WA.
+Lihat Log (Jika ingin melihat pesan masuk):
+
+perintah
+pm2 logs bot
+
+
+Jika statusnya errored atau stopped:
+Baru kamu jalankan perintah ini:
+
+perintah
+pm2 restart bot
+
+npm install whatsapp-web.js.
+
+
+Kesimpulannya: Kamu tidak perlu lagi membiarkan jendela CMD terbuka terus-menerus. Kamu bisa tutup CMD-nya, pakai laptop buat main game atau nonton, dan bot WA kamu akan tetap membalas pesan otomatis selama laptopnya menyala dan konek internet.
+Coba tes sekarang: Tutup semua jendela CMD kamu, lalu ambil HP dan kirim pesan !tanya halo ke nomor bot itu. Balas tidak?
+
+=============================
+star awal"
+
+D:
+
+cd /d D:\API-KEY\my-ai-project
+
+
+
+
