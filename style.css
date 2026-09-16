@@ -1,277 +1,98 @@
-:root {
-    --bg-color: #0d0e12;
-    --card-bg: #16181e;
-    --accent-color: #6366f1;
-    --wa-color: #25d366;
-    --text-primary: #f3f4f6;
-    --text-secondary: #9ca3af;
-    --border-color: #262932;
-    --font-family: 'Inter', sans-serif;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    scroll-behavior: smooth;
-}
-
-body {
-    background-color: var(--bg-color);
-    color: var(--text-primary);
-    font-family: var(--font-family);
-    line-height: 1.6;
-}
-
-/* Navbar & Logo */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 8%;
-    background: rgba(13, 14, 18, 0.9);
-    backdrop-filter: blur(10px);
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.logo a {
-    font-size: 1.3rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    text-decoration: none;
-    letter-spacing: 1px;
-}
-
-.logo a span {
-    color: var(--accent-color);
-}
-
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.nav-links a {
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.95rem;
-    transition: color 0.3s;
-}
-
-.nav-links a:hover {
-    color: var(--text-primary);
-}
-
-/* Dropdown Biasa */
+/* --- PERBAIKAN DROPDOWN BIASA --- */
 .dropdown {
     position: relative;
     display: inline-block;
+    padding-bottom: 15px; /* Jembatan transparan agar hover tidak terputus */
+    margin-bottom: -15px;
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
     background-color: var(--card-bg);
-    min-width: 200px;
-    box-shadow: 0px 8px 16px rgba(0,0,0,0.5);
+    min-width: 220px;
+    box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.6);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     top: 100%;
     left: 0;
     padding: 10px 0;
     z-index: 1001;
-}
-
-.dropdown-content a {
-    padding: 10px 20px;
-    display: block;
-    font-size: 0.9rem;
-}
-
-.dropdown-content a:hover {
-    background-color: var(--border-color);
-    color: var(--accent-color);
+    /* Animasi pemicu halus */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
 }
 
 .dropdown:hover .dropdown-content {
     display: block;
+    opacity: 1;
+    visibility: visible;
 }
 
-/* Mega Menu Structure */
+
+/* --- PERBAIKAN MEGA MENU --- */
 .mega-dropdown {
     position: static;
+    padding-bottom: 15px; /* Jembatan area hover */
+    margin-bottom: -15px;
 }
 
 .mega-menu {
-    display: none;
     position: absolute;
-    top: 100%;
+    top: 100%; /* Menempel pas di bawah navbar */
     left: 0;
     width: 100%;
     background-color: var(--card-bg);
+    border-top: 1px solid var(--border-color);
     border-bottom: 2px solid var(--accent-color);
-    box-shadow: 0px 10px 20px rgba(0,0,0,0.6);
+    box-shadow: 0px 15px 30px rgba(0,0,0,0.7);
     padding: 30px 8%;
     z-index: 999;
+    
+    /* Mencegah menu cepat hilang saat kursor bergerak */
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; /* Mencegah klik saat tersembunyi */
+    transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
-.mega-menu-content {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-}
-
-.mega-col h4 {
-    color: var(--accent-color);
-    margin-bottom: 15px;
-    font-size: 1rem;
-}
-
-.mega-col a {
-    display: block;
-    padding: 6px 0;
-    font-size: 0.9rem;
-}
-
-.promo-col {
-    background: rgba(99, 102, 241, 0.05);
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-}
-
-.promo-col p {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-bottom: 15px;
-}
-
-.btn-mega {
-    color: var(--accent-color) !important;
-    font-weight: 600;
-}
-
+/* Saat di-hover, tampilkan dengan stabil */
 .mega-dropdown:hover .mega-menu {
-    display: block;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
 
-/* Button Nav Header */
-.btn-nav {
-    background: var(--accent-color);
-    color: #fff !important;
-    padding: 8px 18px;
-    border-radius: 6px;
-}
 
-/* Floating WhatsApp Button - Pojok Kiri Bawah */
-.wa-float {
-    position: fixed;
-    bottom: 25px;
-    left: 25px;
-    background-color: var(--wa-color);
-    color: #fff;
-    border-radius: 50px;
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    text-decoration: none;
-    box-shadow: 0px 4px 15px rgba(37, 211, 102, 0.4);
-    z-index: 9999;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.wa-float:hover {
-    transform: translateY(-3px);
-    box-shadow: 0px 6px 20px rgba(37, 211, 102, 0.6);
-}
-
-.wa-icon {
-    font-size: 1.5rem;
-    margin-right: 10px;
-}
-
-.wa-text {
-    font-weight: 600;
-    font-size: 0.9rem;
-}
-
-/* Hero Section & Projects */
-.hero {
-    min-height: 85vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 140px 8% 60px;
-    max-width: 900px;
-}
-
-.badge {
-    align-self: flex-start;
-    background: rgba(99, 102, 241, 0.1);
-    color: var(--accent-color);
-    border: 1px solid var(--accent-color);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    margin-bottom: 20px;
-}
-
-.hero h1 {
-    font-size: 3rem;
-    font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: 20px;
-}
-
-.hero h1 span {
-    background: linear-gradient(90deg, #6366f1, #a855f7);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.hero p {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-    margin-bottom: 30px;
-}
-
-.hero-buttons {
-    display: flex;
-    gap: 15px;
-}
-
-.btn {
-    padding: 12px 24px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.btn-primary { background-color: var(--text-primary); color: var(--bg-color); }
-.btn-secondary { border: 1px solid var(--border-color); color: var(--text-primary); }
-
-.projects { padding: 60px 8%; }
-.projects h2 { font-size: 2rem; margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-.project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
-.project-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); }
-.project-image img { width: 100%; height: 200px; object-fit: cover; }
-.project-info { padding: 20px; }
-.category { font-size: 0.8rem; color: var(--accent-color); text-transform: uppercase; }
-.project-link { color: var(--text-primary); text-decoration: none; font-weight: 600; display: inline-block; margin-top: 10px; }
-
-footer { padding: 60px 8% 30px; background-color: #08090b; border-top: 1px solid var(--border-color); text-align: center; }
-.footer-bottom { margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px; color: var(--text-secondary); font-size: 0.85rem; }
-
-/* Responsive HP */
+/* --- RESPONSIF UNTUK TAMPILAN HP / MOBILE --- */
 @media (max-width: 768px) {
-    .nav-links { display: none; } /* Dapat ditambahkan menu hamburger jika diperlukan */
-    .hero h1 { font-size: 2rem; }
-    .wa-text { display: none; } /* Menyembunyikan teks di HP agar tombol WA ringkas berupa ikon */
-    .wa-float { padding: 15px; border-radius: 50%; bottom: 20px; left: 20px; }
-    .wa-icon { margin-right: 0; }
+    .nav-links {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--card-bg);
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .mega-dropdown, .dropdown {
+        width: 100%;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+
+    .mega-menu {
+        position: static; /* Mengubah mega menu menjadi tampilan accordion di HP */
+        box-shadow: none;
+        padding: 15px 0;
+    }
+
+    .mega-menu-content {
+        grid-template-columns: 1fr; /* Mengubah 3 kolom menjadi 1 kolom sejajar di HP */
+        gap: 15px;
+    }
 }
