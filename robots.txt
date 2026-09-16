@@ -1,0 +1,12 @@
+# robots.txt untuk https://www.agas88.site (GitHub Pages)
+
+User-agent: *
+Allow: /
+
+# Mencegah pengindeksan file atau folder internal jika ada
+Disallow: /.github/
+Disallow: /README.md
+Disallow: /LICENSE
+
+# Lokasi Peta Situs (Sitemap)
+Sitemap: https://www.agas88.site/sitemap.xml
