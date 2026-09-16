@@ -3,33 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portofolio Pribadi | Minimalist & Modern</title>
+    <title>AGAS88 | Portfolio & Services</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Google Font (Inter) -->
+    <!-- Google Font & Font Awesome Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- Header & Navigasi -->
+    <!-- Header & Navigasi Utama -->
     <header class="navbar">
-        <div class="logo">PORTFOLIO<span>.</span></div>
-        <nav>
-            <a href="#about">Tentang</a>
-            <a href="#projects">Proyek</a>
+        <div class="logo">
+            <a href="https://www.agas88.site">AGAS88<span>.SITE</span></a>
+        </div>
+        
+        <nav class="nav-links">
+            <a href="#about">Beranda</a>
+
+            <!-- Dropdown Menu Biasa -->
+            <div class="dropdown">
+                <a href="#" class="dropbtn">Layanan <i class="fa-solid fa-chevron-down"></i></a>
+                <div class="dropdown-content">
+                    <a href="#"><i class="fa-solid fa-code"></i> Web Development</a>
+                    <a href="#"><i class="fa-solid fa-paint-brush"></i> UI/UX Design</a>
+                    <a href="#"><i class="fa-solid fa-bullhorn"></i> Digital Marketing</a>
+                </div>
+            </div>
+
+            <!-- Mega Menu -->
+            <div class="mega-dropdown">
+                <a href="#" class="dropbtn">Eksplor Portofolio <i class="fa-solid fa-chevron-down"></i></a>
+                <div class="mega-menu">
+                    <div class="mega-menu-content">
+                        <div class="mega-col">
+                            <h4>Kategori Web</h4>
+                            <a href="#">E-Commerce Store</a>
+                            <a href="#">Landing Page SaaS</a>
+                            <a href="#">Company Profile</a>
+                            <a href="#">Aplikasi Web Custom</a>
+                        </div>
+                        <div class="mega-col">
+                            <h4>Teknologi</h4>
+                            <a href="#">HTML, CSS & JavaScript</a>
+                            <a href="#">React & Next.js</a>
+                            <a href="#">PHP & Laravel</a>
+                            <a href="#">Database & API Integration</a>
+                        </div>
+                        <div class="mega-col promo-col">
+                            <h4>Proyek Unggulan</h4>
+                            <p>Lihat bagaimana kami membantu brand membangun identitas digital modern.</p>
+                            <a href="#projects" class="btn-mega">Lihat Semua Proyek &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <a href="#contact" class="btn-nav">Kontak</a>
         </nav>
     </header>
 
     <!-- Hero Section -->
     <section class="hero" id="about">
-        <span class="badge">Tersedia untuk proyek baru</span>
-        <h1>Merancang Pengalaman Digital yang <span>Interaktif & Modern</span>.</h1>
-        <p>Saya seorang Full-Stack Developer & UI/UX Designer yang berfokus pada pembuatan website cepat, minimalis, dan berorientasi pada pengguna.</p>
+        <span class="badge">Selamat Datang di www.agas88.site</span>
+        <h1>Solusi Digital Modern & <span>Interaktif</span>.</h1>
+        <p>Kami merancang dan mengembangkan sistem web responsif, berkinerja tinggi, dan fungsional untuk pertumbuhan bisnis Anda.</p>
         <div class="hero-buttons">
             <a href="#projects" class="btn btn-primary">Lihat Karya</a>
-            <a href="#contact" class="btn btn-secondary">Hubungi Saya</a>
+            <a href="https://wa.me/6285150531572" target="_blank" class="btn btn-secondary"><i class="fa-brands fa-whatsapp"></i> Chat WhatsApp</a>
         </div>
     </section>
 
@@ -37,50 +79,46 @@
     <section class="projects" id="projects">
         <h2>Proyek Pilihan</h2>
         <div class="project-grid">
-
-            <!-- Card Proyek 1 -->
             <article class="project-card">
                 <div class="project-image">
                     <img src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80" alt="E-Commerce App">
                 </div>
                 <div class="project-info">
                     <span class="category">E-Commerce</span>
-                    <h3>Aura Fashion Store</h3>
-                    <p>Platform e-commerce dengan desain minimalis, integrasi pembayaran instan, dan performa tinggi.</p>
+                    <h3>Aura Store Platform</h3>
+                    <p>Platform e-commerce dengan interaksi modern dan transaksi cepat.</p>
                     <a href="#" class="project-link">Lihat Detail &rarr;</a>
                 </div>
             </article>
 
-            <!-- Card Proyek 2 -->
             <article class="project-card">
                 <div class="project-image">
                     <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" alt="Dashboard UI">
                 </div>
                 <div class="project-info">
                     <span class="category">Web Application</span>
-                    <h3>FinTech Analytics Dashboard</h3>
-                    <p>Dashboard interaktif untuk visualisasi data keuangan menggunakan grafik real-time dan dark UI.</p>
+                    <h3>FinTech Analytics</h3>
+                    <p>Dashboard analitik data real-time dengan antarmuka dark mode.</p>
                     <a href="#" class="project-link">Lihat Detail &rarr;</a>
                 </div>
             </article>
-
         </div>
     </section>
 
-    <!-- Footer / Contact Section -->
+    <!-- Tombol WhatsApp Floating (Pojok Kiri Bawah) -->
+    <a href="https://wa.me/6285150531572?text=Halo%20AGAS88,%20saya%20tertarik%20dengan%20layanan%20Anda." class="wa-float" target="_blank" aria-label="Chat WhatsApp">
+        <i class="fa-brands fa-whatsapp wa-icon"></i>
+        <span class="wa-text">Chat Kami</span>
+    </a>
+
+    <!-- Footer -->
     <footer id="contact">
         <div class="footer-content">
-            <h2>Tertarik Bekerja Sama?</h2>
-            <p>Mari diskusikan ide atau proyek Anda berikutnya.</p>
-            <a href="mailto:email@contoh.com" class="email-link">email@contoh.com</a>
+            <h2>Konsultasikan Proyek Anda</h2>
+            <p>Kunjungi kami di <a href="https://www.agas88.site" style="color: var(--accent-color);">www.agas88.site</a> atau hubungi langsung via WhatsApp.</p>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 Nama Anda. All rights reserved.</p>
-            <div class="socials">
-                <a href="#">GitHub</a>
-                <a href="#">LinkedIn</a>
-                <a href="#">Twitter/X</a>
-            </div>
+            <p>&copy; 2026 www.agas88.site. All rights reserved.</p>
         </div>
     </footer>
 
