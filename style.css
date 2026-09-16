@@ -96,3 +96,40 @@
         gap: 15px;
     }
 }
+/* Styling Logo Gambar */
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo-img {
+    height: 45px; /* Tinggi disesuaikan agar pas dengan navbar */
+    width: auto;  /* Menjaga rasio gambar agar tidak terdistorsi */
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+    transform: scale(1.05); /* Efek sedikit membesar saat kursor di atas logo */
+}
+
+/* Penyesuaian navbar agar tinggi konsisten */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 8%; /* Mengurangi padding vertikal sedikit agar pas dengan logo */
+    background: rgba(13, 14, 18, 0.9);
+    backdrop-filter: blur(10px);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color);
+}
